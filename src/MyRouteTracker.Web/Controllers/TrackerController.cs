@@ -21,9 +21,4 @@ public class TrackerController : Controller
         };
         return View(vm);
     }
-    public async Task<IActionResult> New()
-    {
-        var created = await dataService.CreateNewRoute();
-        return RedirectToAction("Details", "TrackerView", new { trackerId = created.Id.ToString() });
-    }
 }

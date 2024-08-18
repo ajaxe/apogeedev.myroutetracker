@@ -1,11 +1,11 @@
+using Htmx;
 using Microsoft.AspNetCore.Mvc;
 using MyRouteTracker.Web.Abstractions.Services;
 using MyRouteTracker.Web.Models;
 
 namespace MyRouteTracker.Web.Controllers;
 
-[Route("Tracker/Instance/{trackerId}")]
-public class TrackerViewController : Controller
+public class TrackerViewController : ViewControllerBase
 {
     private readonly IRouteDataService dataService;
 
@@ -22,5 +22,21 @@ public class TrackerViewController : Controller
         if (existing != null) vm = (RouteDataSetViewModel)existing;
 
         return View(vm);
+    }
+    public async Task<IActionResult> Start(string? trackerId)
+    {
+        if (!Request.IsHtmx())
+        {
+            return RedirectHome();
+        }
+
+        RouteDataSet? tracker = null;
+
+        if (string.IsNullOrWhiteSpace(trackerId))
+            tracker = await dataService.CreateNewRoute();
+        else
+            tracker = await dataService.GetRoute(trackerId);
+
+        return PartialView("_TrackerCollector", (RouteDataSetViewModel)tracker!);
     }
 }

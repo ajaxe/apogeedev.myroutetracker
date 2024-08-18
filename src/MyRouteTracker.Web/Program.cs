@@ -56,6 +56,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+//app.MapHtmxAntiforgeryScript();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
