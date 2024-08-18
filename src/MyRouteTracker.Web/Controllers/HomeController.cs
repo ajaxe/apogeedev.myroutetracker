@@ -34,17 +34,23 @@ public class HomeController : Controller
 
     private async Task SeedDb(AppDbContext dbContext)
     {
+        const string defaultExternalId = "default";
+
         var defaultUser = new UserProfile
         {
             AuthenticationType = Guid.NewGuid().ToString(),
-            ExternalId = "default",
+            ExternalId = defaultExternalId,
         };
 
-        if (!await dbContext.UserProfiles.AnyAsync(p => p.ExternalId == "default"))
+        if (!await dbContext.UserProfiles.AnyAsync(p => p.ExternalId == defaultExternalId))
         {
             dbContext.UserProfiles.Add(defaultUser);
 
             await dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            defaultUser = await dbContext.UserProfiles.FirstAsync(p => p.ExternalId == defaultExternalId);
         }
 
         if (!await dbContext.RouteDataSets.AnyAsync(p => p.UserProfileId == defaultUser.Id))

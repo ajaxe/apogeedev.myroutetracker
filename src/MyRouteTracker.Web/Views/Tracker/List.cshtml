@@ -1,3 +1,5 @@
+@model RouteDataSetListViewModel
+
 @{
     ViewData["Title"] = "Tracker Listing";
 }
@@ -5,3 +7,22 @@
 <div class="text-center">
     <h1 class="display-4">Tracker Listing</h1>
 </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Mode</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var app in Model.Routes)
+        {
+            <tr>
+                <td><a asp-controller="TrackerView" asp-action="Details" asp-route-trackerId="@app.Id">@app.Name</a>
+                </td>
+                <td>@app.Mode</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

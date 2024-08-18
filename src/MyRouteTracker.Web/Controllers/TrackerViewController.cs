@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MyRouteTracker.Web.Controllers;
 
-[Route("tracker/instance/{trackerId}")]
+[Route("Tracker/Instance/{trackerId}")]
 public class TrackerViewController : Controller
 {
     public IActionResult Details(string trackerId)

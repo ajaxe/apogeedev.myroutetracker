@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
+using MyRouteTracker.Web.Abstractions;
+using MyRouteTracker.Web.Abstractions.Services;
 using MyRouteTracker.Web.Helpers.Configuration;
+using MyRouteTracker.Web.Services;
 using Serilog;
 
 const string EnvVarPrefix = "APP_";
@@ -21,6 +24,10 @@ builder.Services.AddOptions();
 builder.Configuration
     .AddJsonFile("secrets.json", optional: true, reloadOnChange: false)
     .AddEnvironmentVariables(prefix: EnvVarPrefix);
+
+builder.Services.AddScoped<IUserContextProvider, UserContextProvider>();
+builder.Services.AddTransient<IRouteDataService, RouteDataService>();
+builder.Services.AddTransient<IDataIngestionService, DataIngestionService>();
 
 builder.Services.AddDbContext<AppDbContext>((sp, o) =>
     {
