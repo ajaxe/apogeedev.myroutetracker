@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using MyRouteTracker.Web.Abstractions;
 using MyRouteTracker.Web.Abstractions.Services;
@@ -12,6 +11,8 @@ const string EnvVarPrefix = "APP_";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSerilog((s, lc) => lc.ReadFrom.Configuration(builder.Configuration));
+
+builder.Services.AddHealthChecks();
 
 builder.Services.Configure<AppOptions>(
     builder.Configuration.GetSection(AppOptions.SectionName)
@@ -38,15 +39,17 @@ builder.Services.AddDbContext<AppDbContext>((sp, o) =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+string appPrefix = Environment.GetEnvironmentVariable($"{EnvVarPrefix}AppPathPrefix") ?? string.Empty;
+
+if (!string.IsNullOrWhiteSpace(appPrefix))
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.Use((context, next) =>
+    {
+        context.Request.PathBase = appPrefix;
+        return next();
+    });
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -56,5 +59,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHealthChecks("/healthcheck");
 
 app.Run();
