@@ -1,7 +1,16 @@
+@model RouteDataSetViewModel
 @{
     ViewData["Title"] = "Tracker Details";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Tracker Details - @ViewData["trackerId"]</h1>
-</div>
+@if (Model is null)
+{
+    <div class="text-center">
+        <h1 class="display-6">Tracking details found.</h1>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Tracker Details - @Model.Id</h1>
+    </div>
+}

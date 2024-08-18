@@ -1,17 +1,23 @@
 @model RouteDataSetListViewModel
 
 @{
-    ViewData["Title"] = "Tracker Listing";
+    ViewData["Title"] = "Captured routes";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Tracker Listing</h1>
+<div class="">
+    <h1 class="display-6">Captured Routes</h1>
+</div>
+<div>
+    <a class="btn btn-link" role="button" asp-controller="Tracker" asp-action="New">
+        <i class="bi bi-plus"></i> Start route
+    </a>
 </div>
 <table class="table">
     <thead>
         <tr>
             <th scope="col">Name</th>
             <th scope="col">Mode</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +27,7 @@
                 <td><a asp-controller="TrackerView" asp-action="Details" asp-route-trackerId="@app.Id">@app.Name</a>
                 </td>
                 <td>@app.Mode</td>
+                <td><a class="btn btn-link" href="#" role="button">Delete</a></td>
             </tr>
         }
 

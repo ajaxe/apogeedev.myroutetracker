@@ -30,4 +30,22 @@ public class RouteDataService : IRouteDataService
         var id = new ObjectId(routeDateSetId);
         return await dbContext.RouteDataSets.FirstOrDefaultAsync(p => p.Id == id);
     }
+
+    public async Task<RouteDataSet> CreateNewRoute()
+    {
+        var user = await userContext.GetUserProfile()
+            ?? throw new InvalidOperationException("Invalid user");
+
+        var created = new RouteDataSet
+        {
+            UserProfileId = user.Id,
+            Name = $"Route {DateTime.Now}",
+            Mode = "Walk",
+        };
+
+        await dbContext.RouteDataSets.AddAsync(created);
+        await dbContext.SaveChangesAsync();
+
+        return created;
+    }
 }
