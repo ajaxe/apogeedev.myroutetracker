@@ -37,6 +37,22 @@ public class TrackerViewController : ViewControllerBase
         else
             tracker = await dataService.GetRoute(trackerId);
 
+        TriggerReloadRoutes();
+
         return PartialView("_TrackerCollector", (RouteDataSetViewModel)tracker!);
+    }
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string trackerId)
+    {
+        if (!Request.IsHtmx())
+        {
+            return RedirectHome();
+        }
+
+        await dataService.DeleteRoute(trackerId);
+
+        TriggerReloadRoutes();
+
+        return NoContent();
     }
 }

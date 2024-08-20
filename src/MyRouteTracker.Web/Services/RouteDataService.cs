@@ -9,26 +9,37 @@ public class RouteDataService : IRouteDataService
 {
     private readonly IUserContextProvider userContext;
     private readonly AppDbContext dbContext;
+    private readonly ILogger<RouteDataService> logger;
 
     public RouteDataService(IUserContextProvider userContext,
-        AppDbContext dbContext)
+        AppDbContext dbContext, ILogger<RouteDataService> logger)
     {
         this.userContext = userContext;
         this.dbContext = dbContext;
+        this.logger = logger;
     }
-    public async Task<IEnumerable<RouteDataSet>> GetRoutes()
+    public async Task<IEnumerable<RouteDataSet>> GetRoutes(bool? deleted = false)
     {
         var user = await userContext.GetUserProfile()
             ?? throw new InvalidOperationException("Invalid user");
 
-        return await dbContext.RouteDataSets
-            .Where(r => r.UserProfileId == user.Id)
-            .ToListAsync();
+        var q = dbContext.RouteDataSets
+            .Where(r => r.UserProfileId == user.Id);
+
+        if (deleted.HasValue)
+        {
+            q = q.Where(r => !r.MarkForDeletion.HasValue || r.MarkForDeletion == deleted);
+        }
+
+        var r = await q.ToListAsync();
+
+        logger.LogInformation("GetRoutes: {@user} {@count}", user.Id.ToString(), r.Count());
+
+        return r;
     }
     public async Task<RouteDataSet?> GetRoute(string routeDateSetId)
     {
-        var id = new ObjectId(routeDateSetId);
-        return await dbContext.RouteDataSets.FirstOrDefaultAsync(p => p.Id == id);
+        return await dbContext.RouteDataSets.FirstOrDefaultAsync(p => p.Id == routeDateSetId);
     }
 
     public async Task<RouteDataSet> CreateNewRoute()
@@ -47,5 +58,21 @@ public class RouteDataService : IRouteDataService
         await dbContext.SaveChangesAsync();
 
         return created;
+    }
+    public async Task DeleteRoute(string trackerId)
+    {
+        if (string.IsNullOrWhiteSpace(trackerId))
+        {
+            logger.LogInformation("Invalid tracker id, skipping delete");
+            return;
+        }
+
+        var routeData = await dbContext.RouteDataSets.FirstOrDefaultAsync(r => r.Id == trackerId);
+
+        if (routeData is not null)
+        {
+            routeData.MarkForDeletion = true;
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

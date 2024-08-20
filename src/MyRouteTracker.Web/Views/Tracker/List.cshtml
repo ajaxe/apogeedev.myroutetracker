@@ -1,5 +1,3 @@
-@model RouteDataSetListViewModel
-
 @{
     ViewData["Title"] = "Captured routes";
 }
@@ -8,32 +6,11 @@
     <h1 class="display-6">Captured Routes</h1>
 </div>
 <div>
-    <a class="btn btn-link" role="button" asp-controller="TrackerView" asp-action="Start">
-        <i class="bi bi-plus"></i> Start route
+    <a class="btn btn-primary" role="button" hx-get hx-controller="TrackerView" hx-action="Start"
+        hx-target="#collector-wrapper">
+        Start route <i class="bi bi-arrow-right-circle"></i>
     </a>
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Mode</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var app in Model.Routes)
-        {
-            <tr>
-                <td><a asp-controller="TrackerView" asp-action="Details" asp-route-trackerId="@app.Id">@app.Name</a>
-                </td>
-                <td>@app.Mode</td>
-                <td>
-                    <a class="btn btn-link" href="#" role="button">Delete</a>
-                    <a class="btn btn-link" hx-get hx-controller="TrackerView" hx-action="Start"
-                        hx-route-trackerId="@app.Id" hx-target="#collector-wrapper" role="button">Restart</a>
-                </td>
-            </tr>
-        }
+<div hx-get hx-controller="Tracker" hx-action="ListRoutes" hx-trigger="load, reloadRoutes from:body">
 
-    </tbody>
-</table>
+</div>

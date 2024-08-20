@@ -1,4 +1,23 @@
 @model RouteDataSetViewModel
-<div>
-    tracker collector shows here. [@Model.Name]
+
+<div class="container shadow-sm p-2 bg-body-tertiary rounded">
+    <div class="row">
+        <div class="col">
+            [@Model.Name]
+        </div>
+        <div class="col">
+            heading
+        </div>
+        <div class="col-3 col-sm-2 text-center">
+            <a class="btn btn-primary d-none" role="button" href="#">
+                <i class="bi bi-pause"></i><span class="d-none d-sm-inline">Pause</span>
+            </a>
+            <a class="btn btn-primary" role="button" href="#">
+                <i class="bi bi-play-fill"></i> <span class="d-none d-sm-inline">Resume</span>
+            </a>
+            <button class="btn btn-light">
+                <i class="bi bi-x-lg"></i> <span class="d-none d-sm-inline">Finish</span>
+            </button>
+        </div>
+    </div>
 </div>
