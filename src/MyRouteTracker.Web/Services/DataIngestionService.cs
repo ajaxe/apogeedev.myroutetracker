@@ -10,7 +10,7 @@ public class DataIngestionService : IDataIngestionService
     {
         this.logger = logger;
     }
-    public Task Ingest(string userId, string routeId, RouteDataPointInput dataPoint)
+    public Task Ingest(string userId, string routeId, RouteDataPointInput[] dataPoint)
     {
         logger.LogInformation("{@UserId} {@RouteId} posted {@DataPoint}",
             userId, routeId, dataPoint);

@@ -49,8 +49,10 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/htmx/htmx.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/injester.js" asp-append-version="true"></script>
     <script>
         htmx.logAll();
+        let ingesterUrl = '@Url.Content("~/api/ingest")';
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
