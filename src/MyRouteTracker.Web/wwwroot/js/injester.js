@@ -2,8 +2,14 @@ const GeoLocationSensor = (function () {
   const PusherInterval = 10 * 1000;
   const LimiterInterval = 900;
 
-  const pusher = async function () {
-    const timeout = PusherInterval + Math.random() * 100;
+  const pusher = async function (useTimeout) {
+    useTimeout = useTimeout || true;
+    let timeout = 0;
+
+    if (useTimeout) {
+      timeout = PusherInterval + Math.random() * 100;
+    }
+
     var d = [].concat(instance.buffer);
     instance.buffer = [];
     try {
@@ -24,7 +30,9 @@ const GeoLocationSensor = (function () {
     } catch (err) {
       console.error(`Failed to push data. ${err}`);
     }
-    instance.pusherId = setTimeout(pusher, timeout);
+    if (useTimeout) {
+      instance.pusherId = setTimeout(pusher, timeout);
+    }
   };
 
   /**
@@ -81,6 +89,8 @@ const GeoLocationSensor = (function () {
       this.pusherId = -1;
       this.enabled = false;
       this.buffer = [];
+
+      pusher(false);
     },
   };
   let template = {
@@ -117,12 +127,20 @@ const GeoLocationSensor = (function () {
       limiter();
 
       handle = {
-        enable: true,
+        enable: instance.enabled,
         current: () => instance.current,
         stop: () => instance.stop(),
       };
     }
     return handle;
+  };
+
+  const getInstance = function () {
+    return {
+      enable: instance.enabled,
+      current: () => instance.current,
+      stop: () => instance.stop(),
+    };
   };
 
   const createPositionWatcher = (onSuccess, onError) => {
@@ -133,5 +151,5 @@ const GeoLocationSensor = (function () {
     });
   };
 
-  return { start };
+  return { start, getInstance };
 })();

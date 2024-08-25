@@ -1,4 +1,82 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿/**
+ *
+ * @param {Event} event
+ * @param {string} selector
+ */
+const getTarget = function (event, selector) {
+  let $target = $(event.target);
+  if ($target.is(selector)) {
+    return $target;
+  } else {
+    return $(event.target).parents(selector);
+  }
+};
+$(function () {
+  htmx.on(
+    "#collector-wrapper",
+    "click",
+    /**
+     *
+     * @param {Event} e
+     */
+    function (e) {
+      let $target = getTarget(e, "#collect-pause");
 
-// Write your JavaScript code.
+      if ($target.length == 0) {
+        return;
+      }
+
+      GeoLocationSensor.getInstance().stop();
+      $target.addClass("d-none");
+      $("#collect-resume").removeClass("d-none");
+      e.preventDefault();
+    }
+  );
+  htmx.on(
+    "#collector-wrapper",
+    "click",
+    /**
+     *
+     * @param {Event} e
+     */
+    function (e) {
+      let $target = getTarget(e, "#collect-resume");
+
+      if ($target.length == 0) {
+        return;
+      }
+
+      let container = $("#collector-container");
+
+      GeoLocationSensor.start(
+        container.data("userId"),
+        container.data("routeId")
+      );
+
+      $target.addClass("d-none");
+      $("#collect-pause").removeClass("d-none");
+      e.preventDefault();
+    }
+  );
+  htmx.on(
+    "#collector-wrapper",
+    "click",
+    /**
+     *
+     * @param {Event} e
+     */
+    function (e) {
+      let $target = getTarget(e, "#collect-finish");
+
+      if ($target.length == 0) {
+        return;
+      }
+
+      GeoLocationSensor.getInstance().stop();
+
+      $target.parents("#collector-wrapper").empty();
+
+      e.preventDefault();
+    }
+  );
+});

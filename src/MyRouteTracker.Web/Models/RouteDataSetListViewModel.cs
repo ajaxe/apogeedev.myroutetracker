@@ -7,6 +7,7 @@ public class RouteDataSetListViewModel
 public class RouteDataSetViewModel
 {
     public string Id { get; set; } = default!;
+    public string UserProfileId { get; set; } = default!;
     public string Name { get; set; } = default!;
     public string? Mode { get; set; }
 
@@ -15,6 +16,7 @@ public class RouteDataSetViewModel
         return new RouteDataSetViewModel
         {
             Id = model.Id.ToString(),
+            UserProfileId = model.UserProfileId,
             Name = model.Name,
             Mode = model.Mode,
         };

@@ -21,18 +21,22 @@ public class RouteDataPoint : ModelBase
     public class GeometryData
     {
         [BsonElement("type")]
-        public string Type { get; set; } = default!;
+        public string Type { get; set; } = "Point";
         [BsonElement("coordinates")]
-        public int[] Coordinates { get; set; } = new int[0];
+        /// <summary>
+        /// [longitude, latitude]
+        /// </summary>
+        /// <value></value>
+        public decimal[] Coordinates { get; set; } = new decimal[0];
     }
 
     public class DataPointProperties
     {
 
         [BsonElement("speed")]
-        public string? Speed { get; set; }
+        public decimal? Speed { get; set; }
         [BsonElement("speedUnit")]
-        public string? SpeedUnit { get; set; }
+        public string? SpeedUnit { get; set; } = "m/sec";
         [BsonElement("direction")]
         public string? Direction { get; set; }
     }
