@@ -16,4 +16,8 @@
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
   </ItemGroup>
 
+  <Target Name="BuildJsFiles" BeforeTargets="PostBuildEvent">
+    <Exec Command="npm run build" WorkingDirectory="./wwwroot" />
+  </Target>
+
 </Project>

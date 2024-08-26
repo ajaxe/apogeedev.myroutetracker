@@ -1,4 +1,6 @@
-﻿window.onerror = function (errMsg, url, line, column, error) {
+﻿import $ from "cash-dom";
+
+window.onerror = function (errMsg, url, line, column, error) {
   let newline = "\r\n";
   let m = `${errMsg} ${newline}[${url}][${line}, ${column}] ${newline}${error}`;
   fetch(
@@ -19,11 +21,6 @@
   consoleLogger.text(consoleLogger.text() + "\r\n###\r\n" + m);
 };
 
-const appendToConsole = function (data) {
-  $("#console-log").text(
-    $("#console-log").text() + "\r\n###\r\n" + JSON.stringify(data)
-  );
-};
 /**
  *
  * @param {Event} event
@@ -38,6 +35,30 @@ const getTarget = function (event, selector) {
   }
 };
 $(function () {
+  htmx.on(
+    "init.collector",
+    /**
+     *
+     * @param {Event | { detail }} e
+     */
+    function (e) {
+      let { userId, routeId } = e.detail;
+      let instance = GeoLocationSensor.getInstance();
+      if (instance.enabled) {
+        instance.stop();
+        utils.appendToConsole({ m: "Instance stopped" });
+      } else {
+        utils.appendToConsole({
+          m: "Starting instance",
+          userId: userId,
+          routeId: routeId,
+        });
+        instance = GeoLocationSensor.start(userId, routeId);
+      }
+      $("#client-id").text(clientId);
+    }
+  );
+
   htmx.on(
     "#collector-wrapper",
     "click",

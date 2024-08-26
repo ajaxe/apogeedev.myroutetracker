@@ -34,19 +34,5 @@
     </div>
 </div>
 <script>
-    (function () {
-        let instance = GeoLocationSensor.getInstance();
-        if (instance.enabled) {
-            instance.stop();
-            appendToConsole({ m: "Instance stopped" });
-        } else {
-            appendToConsole({
-                m: "Starting instance",
-                userId: '@Model.UserProfileId',
-                routeId: '@Model.Id'
-            });
-            instance = GeoLocationSensor.start('@Model.UserProfileId', '@Model.Id');
-        }
-        $("#client-id").text(clientId);
-    })();
+    htmx.trigger("body", "init.collector", { userId: '@Model.UserProfileId', routeId: '@Model.Id' });
 </script>

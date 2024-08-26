@@ -1,4 +1,6 @@
-const GeoLocationSensor = (function () {
+import { appendToConsole } from "./common";
+
+export default (function () {
   const PusherInterval = 10 * 1000;
   const LimiterInterval = 900;
 
