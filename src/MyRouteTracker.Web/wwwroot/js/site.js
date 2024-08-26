@@ -1,4 +1,30 @@
-﻿/**
+﻿window.onerror = function (errMsg, url, line, column, error) {
+  let newline = "\r\n";
+  let m = `${errMsg} ${newline}[${url}][${line}, ${column}] ${newline}${error}`;
+  fetch(
+    new Request(`${errorsUrl}?clientId=${clientId}`, {
+      method: "POST",
+      body: JSON.stringify({
+        errMsg,
+        url,
+        line,
+        column,
+        error,
+      }),
+      headers: new Headers({ "content-type": "application/json" }),
+    })
+  );
+  alert(m);
+  let consoleLogger = $("#console-log");
+  consoleLogger.text(consoleLogger.text() + "\r\n###\r\n" + m);
+};
+
+const appendToConsole = function (data) {
+  $("#console-log").text(
+    $("#console-log").text() + "\r\n###\r\n" + JSON.stringify(data)
+  );
+};
+/**
  *
  * @param {Event} event
  * @param {string} selector
@@ -49,8 +75,8 @@ $(function () {
       let container = $("#collector-container");
 
       GeoLocationSensor.start(
-        container.data("userId"),
-        container.data("routeId")
+        container.data("userid"),
+        container.data("routeid")
       );
 
       $target.addClass("d-none");

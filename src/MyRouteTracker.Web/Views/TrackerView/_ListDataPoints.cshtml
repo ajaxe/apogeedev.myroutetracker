@@ -1,0 +1,37 @@
+@model RouteDataPointListViewModel
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Latitude</th>
+            <th scope="col">Longitude</th>
+            <th scope="col">Speed</th>
+            <th scope="col">Heading</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var app in Model.DataPoints)
+        {
+            <tr>
+                <td>
+                    <span>@app.RecordDate.ToString()</span>
+                </td>
+                <td>
+                    <span>@app.Longitude</span>
+                </td>
+                <td>
+                    <span>@app.Latitude</span>
+                </td>
+                <td>
+                    <span>@app.Speed</span>
+                </td>
+                <td>
+                    <span>@app.Heading</span>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

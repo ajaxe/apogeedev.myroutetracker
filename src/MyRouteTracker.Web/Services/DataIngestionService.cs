@@ -30,11 +30,12 @@ public class DataIngestionService : IDataIngestionService
                 {
                     Coordinates = [d.Coords!.Longitude!.Value, d.Coords.Latitude!.Value],
                 },
+                Timestamp = d.Timestamp,
                 RouteDataSetId = ObjectId.Parse(routeId),
                 UserProfileId = ObjectId.Parse(userId),
                 Properties = new DataPointProperties
                 {
-                    Direction = d.Coords.Heading,
+                    Heading = d.Coords.Heading,
                     Speed = d.Coords.Speed,
                 }
             });

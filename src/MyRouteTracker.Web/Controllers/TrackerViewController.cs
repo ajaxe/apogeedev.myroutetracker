@@ -23,6 +23,23 @@ public class TrackerViewController : ViewControllerBase
 
         return View(vm);
     }
+
+    public async Task<IActionResult> ListDataPoints(string trackerId)
+    {
+        if (!Request.IsHtmx())
+        {
+            return RedirectHome();
+        }
+        var data = await dataService.GetRouteDataPoints(trackerId);
+
+        var vm = new RouteDataPointListViewModel
+        {
+            DataPoints = data.Select(d => (RouteDataPointViewModel)d).ToList()
+        };
+
+        return PartialView("_ListDataPoints", vm);
+    }
+
     public async Task<IActionResult> Start(string? trackerId)
     {
         if (!Request.IsHtmx())

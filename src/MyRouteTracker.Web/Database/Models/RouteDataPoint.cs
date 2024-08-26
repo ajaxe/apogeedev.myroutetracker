@@ -9,6 +9,8 @@ public class RouteDataPoint : ModelBase
 {
     [BsonElement("geometry")]
     public GeometryData? Geometry { get; set; }
+    [BsonElement("timestamp")]
+    public DateTime? Timestamp { get; set; }
     [BsonElement("properties")]
     public DataPointProperties? Properties { get; set; }
 
@@ -37,7 +39,7 @@ public class RouteDataPoint : ModelBase
         public decimal? Speed { get; set; }
         [BsonElement("speedUnit")]
         public string? SpeedUnit { get; set; } = "m/sec";
-        [BsonElement("direction")]
-        public string? Direction { get; set; }
+        [BsonElement("heading")]
+        public decimal? Heading { get; set; }
     }
 }

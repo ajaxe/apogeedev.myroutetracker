@@ -4,6 +4,7 @@ public interface IRouteDataService
 {
     Task<IEnumerable<RouteDataSet>> GetRoutes(bool? deleted = false);
     Task<RouteDataSet?> GetRoute(string routeDateSetId);
+    Task<IEnumerable<RouteDataPoint>> GetRouteDataPoints(string routeDateSetId);
     Task<RouteDataSet> CreateNewRoute();
     Task DeleteRoute(string trackerId);
 }

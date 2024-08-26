@@ -53,7 +53,9 @@
     <script src="~/js/injester.js" asp-append-version="true"></script>
     <script>
         //htmx.logAll();
+        let clientId = '@System.Guid.NewGuid()'
         let ingesterUrl = '@Url.Content("~/api/ingest")';
+        let errorsUrl = '@Url.Content("~/api/ingest/errors")';
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

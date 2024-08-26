@@ -17,4 +17,8 @@ else
             <span>@Model.Mode</span>
         </p>
     </div>
+    <div hx-get hx-controller="TrackerView" hx-action="ListDataPoints" hx-trigger="load, reloadDataPoints from:body"
+        hx-route-trackerId="@Model.Id">
+
+    </div>
 }

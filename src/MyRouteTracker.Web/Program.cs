@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyRouteTracker.Web.Abstractions;
 using MyRouteTracker.Web.Abstractions.Services;
+using MyRouteTracker.Web.Helpers;
 using MyRouteTracker.Web.Helpers.Configuration;
 using MyRouteTracker.Web.Services;
 using Serilog;
@@ -11,7 +12,8 @@ const string EnvVarPrefix = "APP_";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSerilog((s, lc) => lc.ReadFrom.Configuration(builder.Configuration));
-
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 
 builder.Services.Configure<AppOptions>(
@@ -49,7 +51,7 @@ if (!string.IsNullOrWhiteSpace(appPrefix))
         return next();
     });
 }
-
+app.UseExceptionHandler();
 app.UseStaticFiles();
 
 app.UseRouting();

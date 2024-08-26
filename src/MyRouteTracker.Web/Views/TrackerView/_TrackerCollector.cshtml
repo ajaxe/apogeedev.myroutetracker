@@ -4,6 +4,17 @@
     data-userId="@Model.UserProfileId" data-routeId="@Model.Id">
     <div class="row">
         <div class="col">
+            <strong><span class="pe-2">Console</span><span id="client-id"></span><i
+                    class="bi bi-arrows-collapse"></i></strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <textarea id="console-log" readonly style="width: 100%; min-height: 200px;"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
             [@Model.Name]
         </div>
         <div class="col">
@@ -27,9 +38,15 @@
         let instance = GeoLocationSensor.getInstance();
         if (instance.enabled) {
             instance.stop();
+            appendToConsole({ m: "Instance stopped" });
         } else {
-            console.log('Instance not running');
+            appendToConsole({
+                m: "Starting instance",
+                userId: '@Model.UserProfileId',
+                routeId: '@Model.Id'
+            });
             instance = GeoLocationSensor.start('@Model.UserProfileId', '@Model.Id');
         }
+        $("#client-id").text(clientId);
     })();
 </script>

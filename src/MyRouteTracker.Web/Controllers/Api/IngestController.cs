@@ -7,9 +7,11 @@ namespace MyRouteTracker.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class IngestController : ControllerBase
 {
-    public IngestController()
-    {
+    private readonly ILogger<IngestController> logger;
 
+    public IngestController(ILogger<IngestController> logger)
+    {
+        this.logger = logger;
     }
 
     [HttpPost("{userId}/{routeId}/datapoint")]
@@ -18,6 +20,12 @@ public class IngestController : ControllerBase
         [FromServices] IDataIngestionService ingestionService)
     {
         await ingestionService.Ingest(userId, routeId, data);
-        return Ok();
+        return NoContent();
+    }
+    [HttpPost("errors")]
+    public IActionResult PostErrors([FromBody] Dictionary<string, object> data)
+    {
+        logger.LogError("JS {@Error}", data);
+        return NoContent();
     }
 }

@@ -11,24 +11,34 @@ const GeoLocationSensor = (function () {
     }
 
     var d = [].concat(instance.buffer);
-    instance.buffer = [];
-    try {
-      if (d.length > 0) {
-        await fetch(
-          new Request(
-            `${ingesterUrl}/${instance.userId}/${instance.routeId}/datapoint`,
-            {
-              method: "POST",
-              body: JSON.stringify(d),
-              headers: new Headers({ "content-type": "application/json" }),
-            }
-          )
-        );
-      } else {
-        console.log("No data to push");
-      }
-    } catch (err) {
-      console.error(`Failed to push data. ${err}`);
+
+    if (d.length > 0) {
+      instance.buffer = [];
+      let url = `${ingesterUrl}/${instance.userId}/${instance.routeId}/datapoint?clientId=${clientId}`;
+      appendToConsole({
+        count: d.length,
+        url,
+      });
+      let body = JSON.stringify(d);
+      appendToConsole({ body });
+      /**
+       * {Response}
+       */
+      let response = await fetch(
+        new Request(url, {
+          method: "POST",
+          body: body,
+          headers: new Headers({ "content-type": "application/json" }),
+        })
+      );
+      let responseTxt = "";
+      if (response.status !== 204) responseTxt = await response.text();
+      appendToConsole({
+        status: response.status,
+        response: responseTxt,
+      });
+    } else {
+      console.log("No data to push");
     }
     if (useTimeout) {
       instance.pusherId = setTimeout(pusher, timeout);
@@ -41,8 +51,15 @@ const GeoLocationSensor = (function () {
    */
   const limiter = function () {
     const timeout = LimiterInterval + Math.random() * 100;
-    if (instance.current) {
+    if (
+      instance.current &&
+      (instance.receivedFirst === false ||
+        instance.buffer.length === 0 ||
+        instance.current.timestamp !==
+          instance.buffer[instance.buffer.length - 1].timestamp)
+    ) {
       instance.buffer.push(instance.current);
+      instance.receivedFirst = true;
     }
 
     instance.limiterId = setTimeout(limiter, timeout);
@@ -53,20 +70,22 @@ const GeoLocationSensor = (function () {
    * @param {GeolocationPositionError} positionError
    */
   const onError = function (positionError) {
-    this.error = JSON.stringify(positionError);
-    this.enable = false;
+    instance.error = JSON.stringify(positionError);
+    instance.enable = false;
 
-    console.log(this.error);
+    console.log(instance.error);
     console.log("<--- stopping sensor due to error");
 
-    this.stop();
+    instance.stop();
+
+    appendToConsole({ error: instance.error });
   };
   /**
    *
    * @param {GeolocationPosition} position
    */
   const onSuccess = function (position) {
-    this.current = position;
+    instance.current = position;
     console.log(position);
   };
 
@@ -78,6 +97,7 @@ const GeoLocationSensor = (function () {
     buffer: [],
     limiterId: -1,
     pusherId: -1,
+    receivedFirst: false,
     stop: function () {
       if (navigator.geolocation) {
         navigator.geolocation.clearWatch(this.handler);
@@ -118,10 +138,7 @@ const GeoLocationSensor = (function () {
       instance.routeId = routeId;
       instance.enabled = true;
 
-      instance.handler = createPositionWatcher(
-        onSuccess.bind(instance),
-        onError.bind(instance)
-      );
+      instance.handler = createPositionWatcher(onSuccess, onError);
 
       pusher();
       limiter();

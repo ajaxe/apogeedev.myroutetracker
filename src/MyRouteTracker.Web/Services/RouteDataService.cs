@@ -41,7 +41,11 @@ public class RouteDataService : IRouteDataService
     {
         return await dbContext.RouteDataSets.FirstOrDefaultAsync(p => p.Id == routeDateSetId);
     }
-
+    public async Task<IEnumerable<RouteDataPoint>> GetRouteDataPoints(string routeDateSetId)
+    {
+        var id = ObjectId.Parse(routeDateSetId);
+        return await dbContext.RouteDataPoints.Where(p => p.RouteDataSetId == id).ToListAsync();
+    }
     public async Task<RouteDataSet> CreateNewRoute()
     {
         var user = await userContext.GetUserProfile()
