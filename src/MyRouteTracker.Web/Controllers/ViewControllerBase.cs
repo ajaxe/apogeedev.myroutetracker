@@ -1,8 +1,10 @@
 using Htmx;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MyRouteTracker.Web.Controllers;
 
+[Authorize]
 public abstract class ViewControllerBase : Controller
 {
     protected IActionResult RedirectHome()
