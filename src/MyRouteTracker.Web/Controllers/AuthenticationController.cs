@@ -21,8 +21,8 @@ public class AuthenticationController : Controller
         return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
     }
 
-    [HttpGet("~/logout")]
-    [HttpPost("~/logout")]
+    [HttpGet("~/logout", Name = "logout")]
+    [HttpPost("~/logout", Name = "logout")]
     //[ValidateAntiForgeryToken]
     public async Task<ActionResult> LogOut(string returnUrl)
     {

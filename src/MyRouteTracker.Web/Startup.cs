@@ -10,7 +10,7 @@ using MyRouteTracker.Web.Services;
 using Serilog;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using ZstdSharp.Unsafe;
+using System.Security.Claims;
 
 namespace MyRouteTracker.Web;
 
@@ -121,6 +121,11 @@ public class Startup
             options.SaveTokens = true;
             options.Prompt = OpenIdConnectPrompt.SelectAccount;
 
+            options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Name, "name");
+            options.ClaimActions.MapUniqueJsonKey(ClaimTypes.NameIdentifier, "sub");
+            options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Email, "email");
+            options.ClaimActions.MapUniqueJsonKey("picture", "picture");
+
             // Should we request user profile details for user end point?
             options.GetClaimsFromUserInfoEndpoint = true;
 
@@ -131,16 +136,12 @@ public class Startup
             options.Scope.Add("profile");
 
             // How to handle OIDC events?
-            /*options.Events = new OpenIdConnectEvents
+            options.Events = new OpenIdConnectEvents
             {
-                OnRedirectToIdentityProviderForSignOut = context =>
+                OnUserInformationReceived = context =>
                 {
-                    context.Response.Redirect(Configuration["Google:RedirectOnSignOut"]);
-                    context.HandleResponse();
-
                     return Task.CompletedTask;
                 },
-
                 // Where to redirect when we get authentication errors?
                 OnRemoteFailure = context =>
                 {
@@ -148,7 +149,7 @@ public class Startup
                     context.HandleResponse();
                     return Task.FromResult(0);
                 },
-            };*/
+            };
         });
     }
 
