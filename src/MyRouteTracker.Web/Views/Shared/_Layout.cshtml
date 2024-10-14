@@ -30,7 +30,7 @@
                 @if (User.Identity?.IsAuthenticated ?? false)
                 {
                     <div class="d-flex">
-                        <i class="bi bi-person-circle me-3 mt-2"><span class="lead">@User.Identity.Name</span>
+                        <i class="bi bi-person-circle me-3 mt-1"><span class="lead ms-1">@User.Identity.Name</span>
                         </i><a asp-route="logout" class="btn btn-light">Logout</a>
                     </div>
                 }
