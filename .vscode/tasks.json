@@ -3,6 +3,15 @@
   "tasks": [
     {
       "label": "build",
+      "dependsOn": ["npm-build", "dotnet-build"],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "dotnet-build",
       "command": "dotnet",
       "type": "process",
       "args": [
@@ -15,6 +24,23 @@
       "group": {
         "kind": "build",
         "isDefault": true
+      }
+    },
+    {
+      "label": "npm-install",
+      "type": "npm",
+      "script": "install",
+      "options": {
+        "cwd": "${workspaceFolder}/src/MyRouteTracker.Web/wwwroot"
+      }
+    },
+    {
+      "label": "npm-build",
+      "type": "npm",
+      "script": "build",
+      "dependsOn": ["npm-install"],
+      "options": {
+        "cwd": "${workspaceFolder}/src/MyRouteTracker.Web/wwwroot"
       }
     },
     {
