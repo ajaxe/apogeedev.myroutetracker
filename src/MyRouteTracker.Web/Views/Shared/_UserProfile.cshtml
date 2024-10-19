@@ -1,0 +1,42 @@
+@using MyRouteTracker.Web.Abstractions
+@inject IUserContextProvider ctxProvider
+
+@{
+    var profile = await ctxProvider.GetUserProfile();
+}
+
+@if (profile is not null)
+{
+    <div class="align-self-center">
+        <div class="d-inline-block shadow-lg dropdown rounded-pill">
+            <button class="dropdown-toggle rounded-pill" id="avatar-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <img width="48px" class="img-thumbnail rounded-pill " src="@profile.ProfileImageUrl" title="@profile.Name"
+                    referrerpolicy="no-referrer" />
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatar">
+                <li>
+                    <p class="text-center px-4">
+                        <span class="lead">@profile.Name</span><br>
+                        <span>@profile.Email</span>
+                    </p>
+                </li>
+                <li>
+                    <a class="dropdown-item text-center text-dark" asp-controller="Tracker" asp-action="List">Tracker
+                        Routes</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li class="text-center">
+                    <a class="btn btn-outline-secondary w-75" asp-route="logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="float-end">
+        <a class="btn btn-outline-secondary" asp-route="Login">Login</a>
+    </div>
+}

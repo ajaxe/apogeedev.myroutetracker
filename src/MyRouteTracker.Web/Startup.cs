@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
+using MyRouteTracker.Web.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MyRouteTracker.Web;
 
@@ -43,7 +45,7 @@ public class Startup
 
         // Add services to the container.
         services.AddControllersWithViews();
-
+        services.AddHttpContextAccessor();
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
@@ -140,6 +142,7 @@ public class Startup
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.NameIdentifier, "sub");
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Email, "email");
             options.ClaimActions.MapUniqueJsonKey("picture", "picture");
+            options.ClaimActions.MapUniqueJsonKey(AppClaimTypes.IdP, "private:idp");
 
             // Should we request user profile details for user end point?
             options.GetClaimsFromUserInfoEndpoint = true;

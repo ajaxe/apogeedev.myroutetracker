@@ -5,7 +5,7 @@ namespace MyRouteTracker.Web.Abstractions.Services;
 
 public interface IDataIngestionService
 {
-    Task Ingest(string userId, string routeId, RouteDataPointInput[] dataPoint);
+    Task Ingest(string routeId, RouteDataPointInput[] dataPoint);
 }
 public class RouteDataPointInput
 {

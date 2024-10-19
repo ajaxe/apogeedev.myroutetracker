@@ -14,10 +14,8 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public async Task<IActionResult> Index([FromServices] AppDbContext dbContext)
+    public IActionResult Index([FromServices] AppDbContext dbContext)
     {
-        await SeedDb(dbContext);
-
         return View();
     }
 
@@ -30,38 +28,5 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-    private async Task SeedDb(AppDbContext dbContext)
-    {
-        const string defaultExternalId = "default";
-
-        var defaultUser = new UserProfile
-        {
-            AuthenticationType = Guid.NewGuid().ToString(),
-            ExternalId = defaultExternalId,
-        };
-
-        if (!await dbContext.UserProfiles.AnyAsync(p => p.ExternalId == defaultExternalId))
-        {
-            dbContext.UserProfiles.Add(defaultUser);
-
-            await dbContext.SaveChangesAsync();
-        }
-        else
-        {
-            defaultUser = await dbContext.UserProfiles.FirstAsync(p => p.ExternalId == defaultExternalId);
-        }
-
-        if (!await dbContext.RouteDataSets.AnyAsync(p => p.UserProfileId == defaultUser.Id))
-        {
-            dbContext.RouteDataSets.Add(new RouteDataSet
-            {
-                Name = "Default route set",
-                Mode = "Walk",
-                UserProfileId = defaultUser.Id,
-            });
-            await dbContext.SaveChangesAsync();
-        }
     }
 }

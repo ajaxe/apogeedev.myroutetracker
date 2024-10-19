@@ -17,3 +17,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#avatar-btn {
+  padding: 0;
+  border: 0;
+}
+#avatar-btn::after {
+  content: none;
+}

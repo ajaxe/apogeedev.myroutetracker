@@ -42,7 +42,7 @@ $(function () {
      * @param {Event | { detail }} e
      */
     function (e) {
-      let { userId, routeId } = e.detail;
+      let { routeId } = e.detail;
       let instance = GeoLocationSensor.getInstance();
       if (instance.enabled) {
         instance.stop();
@@ -50,10 +50,9 @@ $(function () {
       } else {
         utils.appendToConsole({
           m: "Starting instance",
-          userId: userId,
           routeId: routeId,
         });
-        instance = GeoLocationSensor.start(userId, routeId);
+        instance = GeoLocationSensor.start(routeId);
       }
       $("#client-id").text(clientId);
     }

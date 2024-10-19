@@ -8,7 +8,7 @@ namespace MyRouteTracker.Web.Controllers;
 
 public class AuthenticationController : Controller
 {
-    [HttpGet("~/login")]
+    [HttpGet("~/login", Name = "login")]
     public ActionResult LogIn(string returnUrl)
     {
         var properties = new AuthenticationProperties

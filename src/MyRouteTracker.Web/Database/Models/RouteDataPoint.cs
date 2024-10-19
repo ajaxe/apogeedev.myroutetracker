@@ -4,7 +4,7 @@ using MongoDB.EntityFrameworkCore;
 
 namespace MyRouteTracker.Web.Database.Models;
 
-[Collection("routeDataPoint")]
+[Collection("route_data_point")]
 public class RouteDataPoint : ModelBase
 {
     [BsonElement("geometry")]
@@ -14,10 +14,10 @@ public class RouteDataPoint : ModelBase
     [BsonElement("properties")]
     public DataPointProperties? Properties { get; set; }
 
-    [BsonElement("userProfileId")]
-    public ObjectId UserProfileId { get; set; }
+    [BsonElement("user_profile_id")]
+    public string UserProfileId { get; set; } = default!;
 
-    [BsonElement("routeDataSetId")]
+    [BsonElement("route_data_set_id")]
     public ObjectId RouteDataSetId { get; set; }
 
     public class GeometryData
@@ -37,7 +37,7 @@ public class RouteDataPoint : ModelBase
 
         [BsonElement("speed")]
         public decimal? Speed { get; set; }
-        [BsonElement("speedUnit")]
+        [BsonElement("speed_unit")]
         public string? SpeedUnit { get; set; } = "m/sec";
         [BsonElement("heading")]
         public decimal? Heading { get; set; }

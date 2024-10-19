@@ -1,4 +1,5 @@
 using MongoDB.Bson;
+using MyRouteTracker.Web.Abstractions;
 using MyRouteTracker.Web.Abstractions.Services;
 using static MyRouteTracker.Web.Database.Models.RouteDataPoint;
 
@@ -8,19 +9,27 @@ public class DataIngestionService : IDataIngestionService
 {
     private readonly ILogger<DataIngestionService> logger;
     private readonly AppDbContext dbContext;
+    private readonly IUserContextProvider userContextProvider;
 
     public DataIngestionService(AppDbContext dbContext,
+        IUserContextProvider userContextProvider,
         ILogger<DataIngestionService> logger)
     {
         this.dbContext = dbContext;
+        this.userContextProvider = userContextProvider;
         this.logger = logger;
     }
-    public async Task Ingest(string userId, string routeId, RouteDataPointInput[] dataPoint)
+    public async Task Ingest(string routeId, RouteDataPointInput[] dataPoint)
     {
+
+        var profile = await userContextProvider.GetUserProfile()
+            ?? throw new InvalidOperationException("Invalid user context");
+
         logger.LogInformation("{@UserId} {@RouteId} posted {@DataPoint}",
-            userId, routeId, dataPoint);
+            profile.UserIdentifier, routeId, dataPoint);
         // check userId exists
         // check routeId exists
+
         var dps = dataPoint.Where(d => d.Coords != null
                 && d.Coords.Longitude.HasValue
                 && d.Coords.Latitude.HasValue)
@@ -32,7 +41,7 @@ public class DataIngestionService : IDataIngestionService
                 },
                 Timestamp = d.Timestamp,
                 RouteDataSetId = ObjectId.Parse(routeId),
-                UserProfileId = ObjectId.Parse(userId),
+                UserProfileId = profile.UserIdentifier,
                 Properties = new DataPointProperties
                 {
                     Heading = d.Coords.Heading,

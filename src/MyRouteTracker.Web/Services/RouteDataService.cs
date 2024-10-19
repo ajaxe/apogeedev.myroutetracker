@@ -24,7 +24,7 @@ public class RouteDataService : IRouteDataService
             ?? throw new InvalidOperationException("Invalid user");
 
         var q = dbContext.RouteDataSets
-            .Where(r => r.UserProfileId == user.Id);
+            .Where(r => r.UserProfileId == user.UserIdentifier);
 
         if (deleted.HasValue)
         {
@@ -33,7 +33,7 @@ public class RouteDataService : IRouteDataService
 
         var r = await q.ToListAsync();
 
-        logger.LogInformation("GetRoutes: {@user} {@count}", user.Id.ToString(), r.Count());
+        logger.LogInformation("GetRoutes: {@user} {@count}", user.UserIdentifier, r.Count());
 
         return r;
     }
@@ -53,7 +53,7 @@ public class RouteDataService : IRouteDataService
 
         var created = new RouteDataSet
         {
-            UserProfileId = user.Id,
+            UserProfileId = user.UserIdentifier,
             Name = $"Route {DateTime.Now}",
             Mode = "Walk",
         };

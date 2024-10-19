@@ -8,13 +8,11 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<RouteDataPoint> RouteDataPoints { get; set; }
     public DbSet<RouteDataSet> RouteDataSets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<UserProfile>();
         builder.Entity<RouteDataPoint>();
         builder.Entity<RouteDataSet>();
     }

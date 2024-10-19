@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyRouteTracker.Web.Abstractions.Services;
 
 namespace MyRouteTracker.Web.Controllers.Api;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class IngestController : ControllerBase
 {
@@ -14,12 +16,12 @@ public class IngestController : ControllerBase
         this.logger = logger;
     }
 
-    [HttpPost("{userId}/{routeId}/datapoint")]
-    public async Task<IActionResult> PostDataPoint(string userId, string routeId,
+    [HttpPost("{routeId}/datapoint")]
+    public async Task<IActionResult> PostDataPoint(string routeId,
         [FromBody] RouteDataPointInput[] data,
         [FromServices] IDataIngestionService ingestionService)
     {
-        await ingestionService.Ingest(userId, routeId, data);
+        await ingestionService.Ingest(routeId, data);
         return NoContent();
     }
     [HttpPost("errors")]

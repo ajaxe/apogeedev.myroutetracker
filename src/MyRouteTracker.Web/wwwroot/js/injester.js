@@ -16,7 +16,7 @@ export default (function () {
 
     if (d.length > 0) {
       instance.buffer = [];
-      let url = `${ingesterUrl}/${instance.userId}/${instance.routeId}/datapoint?clientId=${clientId}`;
+      let url = `${ingesterUrl}/${instance.routeId}/datapoint?clientId=${clientId}`;
       appendToConsole({
         count: d.length,
         url,
@@ -92,7 +92,6 @@ export default (function () {
   };
 
   let instance = {
-    userId: "",
     routeId: "",
     enabled: false,
     handler: -1,
@@ -123,10 +122,9 @@ export default (function () {
 
   /**
    *
-   * @param {string} userId
    * @param {string} routeId
    */
-  const start = function (userId, routeId) {
+  const start = function (routeId) {
     let handle = Object.assign(template, {
       enabled: false,
     });
@@ -136,7 +134,6 @@ export default (function () {
         instance.stop();
       }
 
-      instance.userId = userId;
       instance.routeId = routeId;
       instance.enabled = true;
 

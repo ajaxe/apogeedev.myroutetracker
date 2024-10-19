@@ -1,20 +1,24 @@
 
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using MyRouteTracker.Web.Abstractions;
+using MyRouteTracker.Web.Models;
 
 namespace MyRouteTracker.Web.Services;
 public class UserContextProvider : IUserContextProvider
 {
-    private const string DefaultUserId = "default";
-    private readonly AppDbContext dbContext;
+    private readonly IHttpContextAccessor httpContextAccessor;
 
-    public UserContextProvider(AppDbContext dbContext)
+    public UserContextProvider(IHttpContextAccessor httpContextAccessor)
     {
-        this.dbContext = dbContext;
+        this.httpContextAccessor = httpContextAccessor;
     }
-    public async Task<UserProfile?> GetUserProfile()
+    public Task<UserProfile?> GetUserProfile()
     {
-        return await dbContext.UserProfiles
-            .FirstOrDefaultAsync(p => p.ExternalId == DefaultUserId);
+        if (!(httpContextAccessor.HttpContext!.User.Identity?.IsAuthenticated ?? false))
+        {
+            return Task.FromResult(default(UserProfile?));
+        }
+        var profile = new UserProfile(httpContextAccessor.HttpContext!.User);
+        return Task.FromResult<UserProfile?>(profile);
     }
 }
