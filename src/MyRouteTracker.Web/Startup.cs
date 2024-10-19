@@ -154,7 +154,6 @@ public class Startup
             options.Scope.Add("profile");
 
             options.EventsType = typeof(OpenIdConnectEventsHandler);
-            options.BackchannelTimeout = TimeSpan.FromSeconds(300);
         });
     }
 

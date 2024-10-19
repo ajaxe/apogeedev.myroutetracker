@@ -9,12 +9,12 @@ namespace MyRouteTracker.Web.Controllers;
 public class AuthenticationController : Controller
 {
     [HttpGet("~/login", Name = "login")]
-    public ActionResult LogIn(string returnUrl)
+    public ActionResult LogIn(string returnUrl = "")
     {
         var properties = new AuthenticationProperties
         {
             // Only allow local return URLs to prevent open redirect attacks.
-            RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/"
+            RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : Request.PathBase
         };
 
         // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
@@ -58,6 +58,30 @@ public class AuthenticationController : Controller
 
         // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
         return SignOut(properties, OpenIdConnectDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("~/callback/login/local")]
+    [IgnoreAntiforgeryToken]
+    public async Task<ActionResult> LogInCallback()
+    {
+        var result = await HttpContext.AuthenticateAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+        if (result.Principal is not ClaimsPrincipal { Identity.IsAuthenticated: true })
+        {
+            throw new InvalidOperationException("The external authorization data cannot be used for authentication.");
+        }
+
+        var identity = new ClaimsIdentity(
+            authenticationType: "ExternalLogin",
+            nameType: ClaimTypes.Name,
+            roleType: ClaimTypes.Role);
+
+        var properties = new AuthenticationProperties(result.Properties!.Items)
+        {
+            RedirectUri = result.Properties.RedirectUri ?? "/"
+        };
+
+        return SignIn(new ClaimsPrincipal(identity), properties);
     }
 
     [HttpGet("~/callback/logout/local")]
