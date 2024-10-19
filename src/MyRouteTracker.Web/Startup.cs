@@ -11,6 +11,8 @@ using Serilog;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace MyRouteTracker.Web;
 
@@ -42,6 +44,16 @@ public class Startup
         // Add services to the container.
         services.AddControllersWithViews();
 
+
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            options.RequireHeaderSymmetry = false;
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
+
         var authBuilder = services.AddAuthentication(o =>
         {
             o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -64,6 +76,7 @@ public class Startup
         services.AddScoped<IUserContextProvider, UserContextProvider>();
         services.AddTransient<IRouteDataService, RouteDataService>();
         services.AddTransient<IDataIngestionService, DataIngestionService>();
+        services.AddTransient<OpenIdConnectEventsHandler>();
 
         services.AddDbContext<AppDbContext>((sp, o) =>
             {
@@ -76,6 +89,8 @@ public class Startup
     private void ConfigureOpenIdConnect(IServiceCollection services,
         AuthenticationBuilder authBuilder)
     {
+        IdentityModelEventSource.ShowPII = true;
+
         var authOptions = new OAuthOptions();
         Configuration.GetSection(OAuthOptions.SectionName)
             .Bind(authOptions);
@@ -135,26 +150,16 @@ public class Startup
             options.Scope.Add("phone");
             options.Scope.Add("profile");
 
-            // How to handle OIDC events?
-            options.Events = new OpenIdConnectEvents
-            {
-                OnUserInformationReceived = context =>
-                {
-                    return Task.CompletedTask;
-                },
-                // Where to redirect when we get authentication errors?
-                OnRemoteFailure = context =>
-                {
-                    context.Response.Redirect("/error");
-                    context.HandleResponse();
-                    return Task.FromResult(0);
-                },
-            };
+            options.EventsType = typeof(OpenIdConnectEventsHandler);
+            options.BackchannelTimeout = TimeSpan.FromSeconds(300);
         });
     }
 
     public void Configure(IApplicationBuilder app)
     {
+        app.UseForwardedHeaders();
+        app.UseSerilogRequestLogging();
+
         string appPrefix = Environment.GetEnvironmentVariable($"{EnvVarPrefix}AppPathPrefix") ?? string.Empty;
 
         if (!string.IsNullOrWhiteSpace(appPrefix))

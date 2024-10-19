@@ -24,17 +24,20 @@ public class TrackerViewController : ViewControllerBase
         return View(vm);
     }
 
-    public async Task<IActionResult> ListDataPoints(string trackerId)
+    public async Task<IActionResult> ListDataPoints(string trackerId, string? unit)
     {
         if (!Request.IsHtmx())
         {
             return RedirectHome();
         }
+
+        unit ??= "mph";
+
         var data = await dataService.GetRouteDataPoints(trackerId);
 
         var vm = new RouteDataPointListViewModel
         {
-            DataPoints = data.Select(d => (RouteDataPointViewModel)d).ToList()
+            DataPoints = data.Select(d => new RouteDataPointViewModel(d, unit)).ToList()
         };
 
         return PartialView("_ListDataPoints", vm);

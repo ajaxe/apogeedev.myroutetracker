@@ -10,15 +10,29 @@
 }
 else
 {
-    <div class="">
+    <div class="row">
         <h1 class="display-6">Tracker Details</h1>
-        <p class="lead">
+        <div class="lead">
             <span class="me-5">@Model.Name</span>
             <span>@Model.Mode</span>
-        </p>
+            <div style="width: 100px;" class="float-end">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="unit" id="mph" autocomplete="off" value="mph" checked hx-get
+                        hx-controller="TrackerView" hx-action="ListDataPoints" hx-trigger="change"
+                        hx-route-trackerId="@Model.Id" hx-target="#point-list" />
+                    <label class="btn btn-outline-secondary" for="mph">Mph</label>
+
+                    <input type="radio" class="btn-check" name="unit" id="kph" autocomplete="off" value="kph" hx-get
+                        hx-controller="TrackerView" hx-action="ListDataPoints" hx-trigger="change"
+                        hx-route-trackerId="@Model.Id" hx-target="#point-list" />
+                    <label class="btn btn-outline-secondary" for="kph">Kph</label>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <div hx-get hx-controller="TrackerView" hx-action="ListDataPoints" hx-trigger="load, reloadDataPoints from:body"
-        hx-route-trackerId="@Model.Id">
+    <div id="point-list" hx-get hx-controller="TrackerView" hx-action="ListDataPoints"
+        hx-trigger="load, reloadDataPoints from:body" hx-route-trackerId="@Model.Id">
 
     </div>
 }

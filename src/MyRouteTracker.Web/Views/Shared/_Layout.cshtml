@@ -52,7 +52,7 @@
     </footer>
     <script src="~/dist/index.js"></script>
     <script>
-        //htmx.logAll();
+        htmx.logAll();
         let clientId = '@System.Guid.NewGuid()'
         let ingesterUrl = '@Url.Content("~/api/ingest")';
         let errorsUrl = '@Url.Content("~/api/ingest/errors")';

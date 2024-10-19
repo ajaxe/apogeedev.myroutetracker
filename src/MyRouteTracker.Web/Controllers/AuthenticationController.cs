@@ -53,44 +53,11 @@ public class AuthenticationController : Controller
         })
         {
             // Only allow local return URLs to prevent open redirect attacks.
-            RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/"//$"{Startup.IdpBaseUrl.TrimEnd('/')}/connect/logout",
+            //RedirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/"//$"{Startup.IdpBaseUrl.TrimEnd('/')}/connect/logout",
         };
 
         // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
         return SignOut(properties, OpenIdConnectDefaults.AuthenticationScheme);
-    }
-
-    [HttpGet("~/callback/login/local")]
-    [IgnoreAntiforgeryToken]
-    public async Task<ActionResult> LogInCallback()
-    {
-        // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
-        var result = await HttpContext.AuthenticateAsync(OpenIdConnectDefaults.AuthenticationScheme);
-
-        if (result.Principal is not ClaimsPrincipal { Identity.IsAuthenticated: true })
-        {
-            throw new InvalidOperationException("The external authorization data cannot be used for authentication.");
-        }
-
-        // Build an identity based on the external claims and that will be used to create the authentication cookie.
-        var identity = new ClaimsIdentity(
-            authenticationType: "ExternalLogin",
-            nameType: ClaimTypes.Name,
-            roleType: ClaimTypes.Role);
-
-        var properties = new AuthenticationProperties(result.Properties!.Items)
-        {
-            RedirectUri = result.Properties.RedirectUri ?? "/"
-        };
-
-        /*properties.StoreTokens(result.Properties.GetTokens().Where(token => token.Name is
-            // Preserve the access, identity and refresh tokens returned in the token response, if available.
-            OpenIdConnectDefaults.Tokens.BackchannelAccessToken or
-            OpenIdConnectDefaults.Tokens.BackchannelIdentityToken or
-            OpenIdConnectDefaults.Tokens.RefreshToken));
-        */
-
-        return SignIn(new ClaimsPrincipal(identity), properties);
     }
 
     [HttpGet("~/callback/logout/local")]
