@@ -1,8 +1,12 @@
 import $ from "cash-dom";
 export const appendToConsole = function (data) {
-  $("#console-log").text(
-    $("#console-log").text() + "\r\n###\r\n" + JSON.stringify(data)
-  );
+  let $console = $("#console-log");
+
+  if ($console.length > 0) {
+    $console.text($console.text() + "\r\n###\r\n" + JSON.stringify(data));
+  } else {
+    console.log(JSON.stringify(data));
+  }
 };
 
 export const GeoSettings = {
@@ -39,8 +43,16 @@ function checkStatus() {
       return setGeoLocationState(result.state);
     } else if (result.state == "prompt") {
       navigator.geolocation.getCurrentPosition(
-        revealPosition,
-        positionDenied,
+        function (pos) {
+          appendToConsole({ m: "Check", pos });
+        },
+        function (err) {
+          appendToConsole({
+            m: "Check error",
+            code: err.code,
+            message: err.message,
+          });
+        },
         GeoSettings
       );
       return setGeoLocationState(result.state);
