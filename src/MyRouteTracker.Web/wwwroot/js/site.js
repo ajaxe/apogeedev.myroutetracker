@@ -1,4 +1,6 @@
 ﻿import $ from "cash-dom";
+import { GeoLocationRecorder } from "./injester";
+import { appendToConsole } from "./common";
 
 window.onerror = function (errMsg, url, line, column, error) {
   let newline = "\r\n";
@@ -34,6 +36,7 @@ const getTarget = function (event, selector) {
     return $(event.target).parents(selector);
   }
 };
+
 $(function () {
   htmx.on(
     "init.collector",
@@ -43,17 +46,12 @@ $(function () {
      */
     function (e) {
       let { routeId } = e.detail;
-      let instance = GeoLocationSensor.getInstance();
-      if (instance.enabled) {
-        instance.stop();
-        utils.appendToConsole({ m: "Instance stopped" });
-      } else {
-        utils.appendToConsole({
-          m: "Starting instance",
-          routeId: routeId,
-        });
-        instance = GeoLocationSensor.start(routeId);
-      }
+      let instance = GeoLocationRecorder.Create(routeId);
+      appendToConsole({
+        m: "Starting instance",
+        routeId: routeId,
+      });
+      instance.start();
       $("#client-id").text(clientId);
     }
   );
@@ -72,7 +70,7 @@ $(function () {
         return;
       }
 
-      GeoLocationSensor.getInstance().stop();
+      GeoLocationRecorder.Current()?.stop();
       $target.addClass("d-none");
       $("#collect-resume").removeClass("d-none");
       e.preventDefault();
@@ -82,7 +80,7 @@ $(function () {
     "#collector-wrapper",
     "click",
     /**
-     *
+     * Handle resume operation
      * @param {Event} e
      */
     function (e) {
@@ -94,10 +92,13 @@ $(function () {
 
       let container = $("#collector-container");
 
-      GeoLocationSensor.start(
-        container.data("userid"),
-        container.data("routeid")
-      );
+      let instance = GeoLocationRecorder.Create(container.data("routeid"));
+      appendToConsole({
+        m: "Starting instance",
+        routeId: routeId,
+      });
+      instance.start();
+      $("#client-id").text(clientId);
 
       $target.addClass("d-none");
       $("#collect-pause").removeClass("d-none");
@@ -108,7 +109,7 @@ $(function () {
     "#collector-wrapper",
     "click",
     /**
-     *
+     * Handle stop
      * @param {Event} e
      */
     function (e) {
@@ -118,7 +119,7 @@ $(function () {
         return;
       }
 
-      GeoLocationSensor.getInstance().stop();
+      GeoLocationRecorder.Current()?.stop();
 
       $target.parents("#collector-wrapper").empty();
 

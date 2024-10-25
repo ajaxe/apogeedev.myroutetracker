@@ -1,171 +1,141 @@
-import { appendToConsole } from "./common";
+import { appendToConsole, GeoSettings, GeoPermission } from "./common";
 
-export default (function () {
-  const PusherInterval = 10 * 1000;
-  const LimiterInterval = 900;
+/**
+ * Time interval to collect gps data before pushing to the server.
+ */
+const PusherInterval = 10 * 1000;
+/**
+ * Time interval to collect gps coordinate.
+ */
+const LimiterInterval = 900;
 
-  const pusher = async function (useTimeout) {
-    useTimeout = useTimeout || true;
-    let timeout = 0;
+/**
+ * @type {?GeoLocationRecorder}
+ */
+let singleton = null;
 
-    if (useTimeout) {
-      timeout = PusherInterval + Math.random() * 100;
-    }
-
-    var d = [].concat(instance.buffer);
-
-    if (d.length > 0) {
-      instance.buffer = [];
-      let url = `${ingesterUrl}/${instance.routeId}/datapoint?clientId=${clientId}`;
-      appendToConsole({
-        count: d.length,
-        url,
-      });
-      let body = JSON.stringify(d);
-      appendToConsole({ body });
-      /**
-       * {Response}
-       */
-      let response = await fetch(
-        new Request(url, {
-          method: "POST",
-          body: body,
-          headers: new Headers({ "content-type": "application/json" }),
-        })
-      );
-      let responseTxt = "";
-      if (response.status !== 204) responseTxt = await response.text();
-      appendToConsole({
-        status: response.status,
-        response: responseTxt,
-      });
-    } else {
-      console.log("No data to push");
-    }
-    if (useTimeout) {
-      instance.pusherId = setTimeout(pusher, timeout);
-    }
-  };
-
-  /**
-   * Data point limiter select limited number of data points
-   * from reported gps data.
-   */
-  const limiter = function () {
-    const timeout = LimiterInterval + Math.random() * 100;
-    if (
-      instance.current &&
-      (instance.receivedFirst === false ||
-        instance.buffer.length === 0 ||
-        instance.current.timestamp !==
-          instance.buffer[instance.buffer.length - 1].timestamp)
-    ) {
-      instance.buffer.push(instance.current);
-      instance.receivedFirst = true;
-    }
-
-    instance.limiterId = setTimeout(limiter, timeout);
-  };
-
-  /**
-   *
-   * @param {GeolocationPositionError} positionError
-   */
-  const onError = function (positionError) {
-    instance.error = JSON.stringify(positionError);
-    instance.enable = false;
-
-    console.log(instance.error);
-    console.log("<--- stopping sensor due to error");
-
-    instance.stop();
-
-    appendToConsole({ error: instance.error });
-  };
-  /**
-   *
-   * @param {GeolocationPosition} position
-   */
-  const onSuccess = function (position) {
-    instance.current = position;
-    console.log(position);
-  };
-
-  let instance = {
-    routeId: "",
-    enabled: false,
-    handler: -1,
-    buffer: [],
-    limiterId: -1,
-    pusherId: -1,
-    receivedFirst: false,
-    stop: function () {
-      if (navigator.geolocation) {
-        navigator.geolocation.clearWatch(this.handler);
-      }
-      clearTimeout(this.limiterId);
-      clearTimeout(this.pusherId);
-
-      this.limiterId = -1;
-      this.pusherId = -1;
-      this.enabled = false;
-      this.buffer = [];
-
-      pusher(false);
-    },
-  };
-  let template = {
-    enabled: false,
-    current: () => {},
-    stop: () => {},
-  };
-
+export class GeoLocationRecorder {
   /**
    *
    * @param {string} routeId
    */
-  const start = function (routeId) {
-    let handle = Object.assign(template, {
-      enabled: false,
-    });
+  constructor(routeId) {
+    this.routeId = routeId;
+    this.enabled = false;
+    this.recorderTimeout = -1;
+    this.dataTransmitTimeout = -1;
+    /**
+     * @type {Array<GeolocationPosition>}
+     */
+    this.buffer = [];
+  }
 
-    if (navigator.geolocation) {
-      if (instance.enabled) {
-        instance.stop();
-      }
-
-      instance.routeId = routeId;
-      instance.enabled = true;
-
-      instance.handler = createPositionWatcher(onSuccess, onError);
-
-      pusher();
-      limiter();
-
-      handle = {
-        enable: instance.enabled,
-        current: () => instance.current,
-        stop: () => instance.stop(),
-      };
+  static Create = function (routeId) {
+    if (singleton) {
+      singleton.stop();
+      appendToConsole({ m: "Instance stopped" });
     }
-    return handle;
+
+    singleton = new GeoLocationRecorder(routeId);
+
+    return singleton;
   };
 
-  const getInstance = function () {
-    return {
-      enable: instance.enabled,
-      current: () => instance.current,
-      stop: () => instance.stop(),
-    };
-  };
+  static Current = () => singleton;
 
-  const createPositionWatcher = (onSuccess, onError) => {
-    return navigator.geolocation.watchPosition(onSuccess, onError, {
-      maximumAge: 0,
-      timeout: 500,
-      enableHighAccuracy: true,
+  start() {
+    console.log(`injester: permission: ${GeoPermission().enabled}`);
+    const timeout = LimiterInterval + Math.random() * 100;
+
+    this.recorderTimeout = setInterval(recorder, timeout, this);
+    this.dataTransmitTimeout = setInterval(
+      pusher,
+      PusherInterval + Math.random() * 100,
+      this,
+      true
+    );
+    this.enabled = true;
+  }
+
+  stop() {
+    if (this.recorderTimeout !== -1) {
+      clearInterval(this.recorderTimeout);
+    }
+    if (this.dataTransmitTimeout !== -1) {
+      clearInterval(this.dataTransmitTimeout);
+    }
+
+    let self = this;
+    pusher(this, true).then(function () {
+      self.buffer = [];
     });
-  };
 
-  return { start, getInstance };
-})();
+    this.enabled = false;
+  }
+}
+
+/**
+ *
+ * @param {GeoLocationRecorder} instance
+ */
+const recorder = function (instance) {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      instance.buffer.push(position);
+    },
+    function (error) {
+      appendToConsole({
+        m: "GPS error, stopping",
+        code: error.code,
+        message: error.message,
+      });
+      instance.stop();
+    },
+    GeoSettings
+  );
+};
+
+/**
+ *
+ * @param {GeoLocationRecorder} instance
+ * @param {boolean} useTimeout
+ */
+const pusher = async function (instance, useTimeout) {
+  useTimeout = useTimeout || true;
+  let timeout = 0;
+
+  if (useTimeout) {
+    timeout = PusherInterval + Math.random() * 100;
+  }
+
+  var d = [].concat(instance.buffer);
+
+  if (d.length > 0) {
+    instance.buffer = [];
+    let url = `${ingesterUrl}/${instance.routeId}/datapoint?clientId=${clientId}`;
+    appendToConsole({
+      count: d.length,
+      url,
+    });
+    let body = JSON.stringify(d);
+    appendToConsole({ body });
+    /**
+     * {Response}
+     */
+    let response = await fetch(
+      new Request(url, {
+        method: "POST",
+        body: body,
+        headers: new Headers({ "content-type": "application/json" }),
+      })
+    );
+    let responseTxt = "";
+    if (response.status !== 204) responseTxt = await response.text();
+    appendToConsole({
+      status: response.status,
+      response: responseTxt,
+    });
+  } else {
+    appendToConsole({ m: "No data to push" });
+  }
+};
