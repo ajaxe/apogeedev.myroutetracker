@@ -31,7 +31,7 @@ else
         </div>
 
     </div>
-    <div id="point-list" hx-get hx-controller="TrackerView" hx-action="ListDataPoints"
+    <div id="point-list" hx-get hx-controller="TrackerView" hx-action="ListDataPoints" hx-vals='js:{tzOffset: tzOffset}'
         hx-trigger="load, reloadDataPoints from:body" hx-route-trackerId="@Model.Id">
 
     </div>

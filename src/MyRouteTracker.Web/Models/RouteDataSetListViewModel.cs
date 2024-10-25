@@ -6,6 +6,15 @@ public class RouteDataSetListViewModel
 }
 public class RouteDataSetViewModel
 {
+    public RouteDataSetViewModel() { }
+    public RouteDataSetViewModel(RouteDataSet r)
+    {
+        Id = r.Id.ToString();
+        UserProfileId = r.UserProfileId;
+        Name = r.Name;
+        Mode = r.Mode;
+    }
+
     public string Id { get; set; } = default!;
     public string UserProfileId { get; set; } = default!;
     public string Name { get; set; } = default!;

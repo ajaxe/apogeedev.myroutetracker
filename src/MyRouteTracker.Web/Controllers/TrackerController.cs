@@ -17,7 +17,7 @@ public class TrackerController : ViewControllerBase
     {
         return View();
     }
-    public async Task<IActionResult> ListRoutes()
+    public async Task<IActionResult> ListRoutes(int? tzOffset)
     {
         if (!Request.IsHtmx())
         {

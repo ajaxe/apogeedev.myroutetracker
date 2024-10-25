@@ -24,7 +24,7 @@ public class TrackerViewController : ViewControllerBase
         return View(vm);
     }
 
-    public async Task<IActionResult> ListDataPoints(string trackerId, string? unit)
+    public async Task<IActionResult> ListDataPoints(string trackerId, string? unit, int? tzOffset)
     {
         if (!Request.IsHtmx())
         {
@@ -37,7 +37,7 @@ public class TrackerViewController : ViewControllerBase
 
         var vm = new RouteDataPointListViewModel
         {
-            DataPoints = data.Select(d => new RouteDataPointViewModel(d, unit)).ToList()
+            DataPoints = data.Select(d => new RouteDataPointViewModel(d, unit, tzOffset)).ToList()
         };
 
         return PartialView("_ListDataPoints", vm);

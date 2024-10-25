@@ -6,12 +6,12 @@
     <h1 class="display-6">Captured Routes</h1>
 </div>
 <div>
-    <partial name="_GeolocationPermission" />
     <a class="btn btn-primary" role="button" hx-get hx-controller="TrackerView" hx-action="Start"
         hx-target="#collector-wrapper">
         Start route <i class="bi bi-arrow-right-circle"></i>
     </a>
 </div>
-<div hx-get hx-controller="Tracker" hx-action="ListRoutes" hx-trigger="load, reloadRoutes from:body">
+<div hx-get hx-controller="Tracker" hx-action="ListRoutes" hx-trigger="load, reloadRoutes from:body"
+    hx-vals='js:{tzOffset: tzOffset}'>
 
 </div>

@@ -5,3 +5,4 @@ import * as utils from "./js/common";
 import * as site from "./js/site";
 
 window.htmx = htmx;
+window.tzOffset = new Date().getTimezoneOffset();

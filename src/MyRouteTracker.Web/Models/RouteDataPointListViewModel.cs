@@ -12,11 +12,12 @@ public class RouteDataPointListViewModel
 public class RouteDataPointViewModel
 {
     public RouteDataPointViewModel() { }
-    public RouteDataPointViewModel(RouteDataPoint data, string? unit)
+    public RouteDataPointViewModel(RouteDataPoint data, string? unit, int? tzOffset)
     {
         var factor = unit == "mph" ? 0.44704M : 18 / 5;
         Id = data.Id.ToString();
-        RecordDate = data.Timestamp.GetValueOrDefault(data.InsertDate.GetValueOrDefault());
+        RecordDate = data.Timestamp.GetValueOrDefault(data.InsertDate.GetValueOrDefault())
+            .AddMinutes(-tzOffset ?? 0);
         Latitude = data.Geometry?.Coordinates[1].ToString("0.000"); // Latitude
         Longitude = data.Geometry?.Coordinates[0].ToString("0.000"); //Longitude,
         Speed = (data.Properties!.Speed.GetValueOrDefault() / factor).ToString("0.000");
