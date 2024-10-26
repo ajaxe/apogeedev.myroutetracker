@@ -60,7 +60,7 @@ $(function () {
     "#collector-wrapper",
     "click",
     /**
-     *
+     * Handle pause
      * @param {Event} e
      */
     function (e) {
@@ -90,13 +90,13 @@ $(function () {
         return;
       }
 
-      let container = $("#collector-container");
-
-      let instance = GeoLocationRecorder.Create(container.data("routeid"));
+      const routeId = $("#collector-container").data("routeid");
       appendToConsole({
         m: "Starting instance",
         routeId: routeId,
       });
+      const instance = GeoLocationRecorder.Create(routeId);
+
       instance.start();
       $("#client-id").text(clientId);
 

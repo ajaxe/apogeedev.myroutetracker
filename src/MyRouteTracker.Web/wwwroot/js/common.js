@@ -11,7 +11,7 @@ export const appendToConsole = function (data) {
 
 export const GeoSettings = {
   maximumAge: 0,
-  timeout: 500,
+  timeout: Infinity,
   enableHighAccuracy: true,
 };
 const geoLocationStatus = {
