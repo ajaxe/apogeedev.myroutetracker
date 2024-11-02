@@ -1,6 +1,6 @@
 @model RouteDataSetListViewModel
 
-<table class="table">
+<table class="table table-dark mt-2">
     <thead>
         <tr>
             <th scope="col">Name</th>
@@ -12,15 +12,16 @@
         @foreach (var app in Model.Routes)
         {
             <tr>
-                <td><a asp-controller="TrackerView" asp-action="Details" asp-route-trackerId="@app.Id">@app.Name</a>
+                <td class="align-middle"><a asp-controller="TrackerView" asp-action="Details"
+                        asp-route-trackerId="@app.Id">@app.Name</a>
                 </td>
-                <td>@app.Mode</td>
+                <td class="align-middle">@app.Mode</td>
                 <td>
-                    <a class="btn btn-light" role="button" hx-delete hx-controller="TrackerView" hx-action="Delete"
+                    <a class="btn btn-secondary" role="button" hx-delete hx-controller="TrackerView" hx-action="Delete"
                         hx-route-trackerId="@app.Id">
                         <i class="bi bi-trash"></i><span class="d-none d-sm-inline">Delete</span>
                     </a>
-                    <a class="btn btn-light" hx-get hx-controller="TrackerView" hx-action="Start"
+                    <a class="btn btn-secondary" hx-get hx-controller="TrackerView" hx-action="Start"
                         hx-route-trackerId="@app.Id" hx-target="#collector-wrapper" role="button">
                         <i class="bi bi-arrow-clockwise"></i>
                         <span class="d-none d-sm-inline">Restart</span>

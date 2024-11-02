@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
@@ -10,7 +10,7 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3 bg-body-tertiary">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">My Route Tracker</a>
 
@@ -26,9 +26,11 @@
     <div class="fixed-bottom mb-5 pb-2" id="collector-wrapper">
 
     </div>
-    <footer class="border-top footer text-muted fixed-bottom py-3">
+    <footer class="border-top footer text-muted fixed-bottom py-3 bg-body-tertiary">
         <div class="container">
-            &copy; 2024 - MyRouteTracker.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - My Route Tracker - <a class="ms-1" href="https://www.apogee-dev.com/privacy/"
+                target="_blank">Privacy<i class="bi bi-box-arrow-up-right align-baseline ms-1"></i>
+            </a>
         </div>
     </footer>
     <script src="~/dist/index.js"></script>

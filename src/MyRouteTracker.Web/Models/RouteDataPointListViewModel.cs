@@ -14,7 +14,7 @@ public class RouteDataPointViewModel
     public RouteDataPointViewModel() { }
     public RouteDataPointViewModel(RouteDataPoint data, string? unit, int? tzOffset)
     {
-        var factor = unit == "mph" ? 0.44704M : 18 / 5;
+        var factor = unit == "mph" ? 0.44704M : (5M / 18M);
         Id = data.Id.ToString();
         RecordDate = data.Timestamp.GetValueOrDefault(data.InsertDate.GetValueOrDefault())
             .AddMinutes(-tzOffset ?? 0);
