@@ -3,11 +3,11 @@ import { appendToConsole, GeoSettings, GeoPermission } from "./common";
 /**
  * Time interval to collect gps data before pushing to the server.
  */
-const PusherInterval = 20 * 1000;
+const PusherInterval = 40_000;
 /**
  * Time interval to collect gps coordinate.
  */
-const LimiterInterval = 1200;
+const LimiterInterval = 10_000;
 
 /**
  * @type {?GeoLocationRecorder}

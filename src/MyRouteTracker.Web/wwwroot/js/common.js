@@ -1,11 +1,19 @@
 import $ from "cash-dom";
+let appendCount = 0;
 export const appendToConsole = function (data) {
   let $console = $("#console-log");
 
-  if ($console.length > 0) {
-    $console.text($console.text() + "\r\n###\r\n" + JSON.stringify(data));
-  } else {
+  if ($console.length === 0) {
     console.log(JSON.stringify(data));
+    return;
+  }
+
+  if (appendCount <= 50) {
+    $console.text($console.text() + "\r\n###\r\n" + JSON.stringify(data));
+    appendCount++;
+  } else {
+    $console.text(JSON.stringify(data));
+    appendCount = 0;
   }
 };
 
