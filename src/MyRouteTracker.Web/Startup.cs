@@ -204,6 +204,7 @@ public class Startup
         return !request.Path.StartsWithSegments("/api")
             && !request.Path.StartsWithSegments("/healthcheck")
             && !request.Path.StartsWithSegments("/callback")
-            && !request.Path.StartsWithSegments("/login");
+            && !request.Path.StartsWithSegments("/login")
+            && !request.Path.StartsWithSegments("/logout");
     }
 }

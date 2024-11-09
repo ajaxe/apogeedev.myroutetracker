@@ -5,10 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (web)",
+      "name": "Frontend",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/MyRouteTracker.Frontend",
+      "runtimeArgs": ["quasar", "dev"],
+      "runtimeExecutable": "pnpm",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "name": "API",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build",
+      "preLaunchTask": "build-launch",
       "program": "${workspaceFolder}/src/MyRouteTracker.Web/bin/Debug/net8.0/MyRouteTracker.Web.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/MyRouteTracker.Web",
@@ -19,18 +28,17 @@
       },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
-        "APP_AppOptions__Username": "test",
-        "APP_AppOptions__Password": "test123"
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/src/MyRouteTracker.Web/Views"
       }
-    },
+    }
+  ],
+  "compounds": [
     {
-      "name": ".NET Core Attach",
-      "type": "coreclr",
-      "request": "attach"
+      "name": "Frontend/API",
+      "configurations": ["Frontend", "API"]
     }
   ]
 }
