@@ -24,7 +24,7 @@
       <q-toolbar>
         <div class="text-weight-regular">
           <q-icon name="copyright" /> 2024 - My Route Tracker -
-          <a href="https://www.apogee-dev.com/privacy/"
+          <a href="https://www.apogee-dev.com/privacy/" target="_blank"
             ><span>Privacy</span><q-icon name="open_in_new"
           /></a>
         </div>
