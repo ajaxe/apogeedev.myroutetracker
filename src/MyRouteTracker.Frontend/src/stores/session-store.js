@@ -8,6 +8,8 @@ export const useSessionStore = defineStore("session", {
     displayName: "",
     profilePic: "",
     userIdentifier: "",
+    loginUrl: "",
+    logoutUrl: "",
   }),
   getters: {
     doubleCount: (state) => state.counter * 2,
@@ -16,11 +18,13 @@ export const useSessionStore = defineStore("session", {
     async checkSession() {
       try {
         const response = await api.get("api/session");
-        this.isLoggedIn = true;
+        this.isLoggedIn = response.data.isLoggedIn;
         this.email = response.data.email;
         this.displayName = response.data.name;
-        this.profilePic = response.data.profileImageUrl;
+        this.profileImageUrl = response.data.profileImageUrl;
         this.userIdentifier = response.data.userIdentifier;
+        this.loginUrl = response.data.loginUrl;
+        this.logoutUrl = response.data.logoutUrl;
       } catch (err) {
         this.isLoggedIn = false;
       }

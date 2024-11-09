@@ -8,9 +8,10 @@ defineOptions({
 
 const sessionStore = useSessionStore();
 
-const pic = ref(sessionStore.profilePic);
+const pic = ref(sessionStore.profileImageUrl);
 const name = ref(sessionStore.displayName);
 const email = ref(sessionStore.email);
+const logoutUrl = ref(sessionStore.logoutUrl);
 </script>
 
 <template>
@@ -31,7 +32,7 @@ const email = ref(sessionStore.email);
         <q-separator />
         <q-item clickable v-close-popup>
           <q-item-section>
-            <q-btn href="logout?returnUrl=/">Logout</q-btn>
+            <q-btn :href="logoutUrl">Logout</q-btn>
           </q-item-section>
         </q-item>
       </q-list>
