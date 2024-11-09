@@ -14,7 +14,6 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
 using MyRouteTracker.Web.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MyRouteTracker.Web;
 
@@ -46,6 +45,7 @@ public class Startup
         // Add services to the container.
         services.AddControllersWithViews();
         services.AddHttpContextAccessor();
+        services.AddSpaStaticFiles(_ => _.RootPath = @"F:\Projects\apogeedev.myroutetracker\src\MyRouteTracker.Frontend");
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
@@ -79,6 +79,7 @@ public class Startup
         services.AddTransient<IRouteDataService, RouteDataService>();
         services.AddTransient<IDataIngestionService, DataIngestionService>();
         services.AddTransient<OpenIdConnectEventsHandler>();
+        services.AddTransient<AppCookieAuthenticationEventsHandler>();
 
         services.AddDbContext<AppDbContext>((sp, o) =>
             {
@@ -172,23 +173,37 @@ public class Startup
                 return next();
             });
         }
+
         app.UseExceptionHandler();
-        app.UseStaticFiles();
 
         app.UseRouting();
 
         app.UseAuthentication();
         app.UseAuthorization();
 
-        //app.MapHtmxAntiforgeryScript();
+        if (Env.IsDevelopment())
+        {
+            app.UseWhen(ctx => IsRequestForSpa(ctx.Request), app =>
+                {
+                    app.UseSpa(spa =>
+                    {
+                        spa.UseProxyToSpaDevelopmentServer("http://localhost:9000");
+                    });
+                });
+        }
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             endpoints.MapHealthChecks("/healthcheck");
         });
+    }
+
+    private bool IsRequestForSpa(HttpRequest request)
+    {
+        return !request.Path.StartsWithSegments("/api")
+            && !request.Path.StartsWithSegments("/healthcheck")
+            && !request.Path.StartsWithSegments("/callback")
+            && !request.Path.StartsWithSegments("/login");
     }
 }

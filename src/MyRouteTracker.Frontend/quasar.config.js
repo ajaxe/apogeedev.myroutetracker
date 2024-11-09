@@ -93,8 +93,18 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      // https: true
+      https: false,
+      hmr: {
+        port: 7134,
+      },
       open: true, // opens browser window automatically
+      proxy: {
+        "^(/api|/login|/callback|/logout)": {
+          target: "https://localhost:7134",
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -103,8 +113,8 @@ module.exports = configure(function (/* ctx */) {
         dark: true,
       },
 
-      // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
+      iconSet: "material-icons", // Quasar icon set
+      lang: "en-US", // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),

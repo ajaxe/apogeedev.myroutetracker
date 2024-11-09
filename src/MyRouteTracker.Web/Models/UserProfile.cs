@@ -4,7 +4,7 @@ namespace MyRouteTracker.Web.Models;
 public class UserProfile
 {
 
-    public ClaimsPrincipal User { get; }
+    private ClaimsPrincipal User { get; }
     public UserProfile(ClaimsPrincipal user)
     {
         this.User = user;

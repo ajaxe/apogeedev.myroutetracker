@@ -42,4 +42,29 @@ public class OpenIdConnectEventsHandler : OpenIdConnectEvents
             new { context.Exception, context.Result, context.ProtocolMessage });
         return Task.CompletedTask;
     }
+    public override Task RedirectToIdentityProvider(RedirectContext context)
+    {
+        if (context.Request.Path.StartsWithSegments("/api") && context.Response.StatusCode == 200)
+        {
+            context.Response.StatusCode = 401;
+            context.HandleResponse();
+            return Task.CompletedTask;
+        }
+
+        return base.RedirectToIdentityProvider(context);
+    }
+    public override Task SignedOutCallbackRedirect(RemoteSignOutContext context)
+    {
+        return base.SignedOutCallbackRedirect(context);
+    }
+    public override Task AccessDenied(AccessDeniedContext context)
+    {
+        if (context.Request.Path.StartsWithSegments("/api") && context.Response.StatusCode == 200)
+        {
+            context.Response.StatusCode = 403;
+            context.HandleResponse();
+        }
+
+        return base.AccessDenied(context);
+    }
 }
