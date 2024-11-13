@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyRouteTracker.Web.Abstractions;
 using MyRouteTracker.Web.Models;
@@ -6,7 +5,6 @@ using MyRouteTracker.Web.Models;
 namespace MyRouteTracker.Web.Controllers.Api;
 
 [ApiController]
-//[Authorize]
 [Route("api/[controller]")]
 public class SessionController : ControllerBase
 {

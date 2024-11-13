@@ -3,21 +3,29 @@ import { api } from "boot/axios";
 
 export const useSessionStore = defineStore("session", {
   state: () => ({
-    isLoggedIn: false,
+    /**
+     * @type {boolean}
+     */
+    isLoggedIn: null,
     email: "",
     displayName: "",
     profilePic: "",
     userIdentifier: "",
     loginUrl: "",
     logoutUrl: "",
+    tzOffset: new Date().getTimezoneOffset(),
   }),
   getters: {
     doubleCount: (state) => state.counter * 2,
   },
   actions: {
-    async checkSession() {
+    async checkSession(forceCheck) {
+      if (forceCheck) {
+        sessionApi = null;
+      }
+      sessionApi = sessionApi || api.get("api/session");
       try {
-        const response = await api.get("api/session");
+        const response = await sessionApi;
         this.isLoggedIn = response.data.isLoggedIn;
         this.email = response.data.email;
         this.displayName = response.data.name;
@@ -31,3 +39,5 @@ export const useSessionStore = defineStore("session", {
     },
   },
 });
+
+let sessionApi = null;

@@ -1,4 +1,5 @@
 import { RouteNames } from "src/stores/constants";
+import { useSessionStore } from "src/stores/session-store";
 
 const routes = [
   {
@@ -19,6 +20,9 @@ const routes = [
       {
         path: "route",
         name: RouteNames.RouteList,
+        beforeEnter: (to, from) => {
+          return checkAuthenticatedSession();
+        },
         component: () => import("pages/RouteListPage.vue"),
         children: [
           {
@@ -38,5 +42,13 @@ const routes = [
     component: () => import("pages/ErrorNotFound.vue"),
   },
 ];
+
+const checkAuthenticatedSession = async () => {
+  const sessionStore = useSessionStore();
+  if (sessionStore.isLoggedIn === null) {
+    await sessionStore.checkSession();
+  }
+  return sessionStore.isLoggedIn;
+};
 
 export default routes;

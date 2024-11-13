@@ -1,17 +1,24 @@
 <script setup>
 import { ref } from "vue";
 import { useSessionStore } from "src/stores/session-store";
+import { useRouter } from "vue-router";
+import { RouteNames } from "src/stores/constants";
 
 defineOptions({
   name: "UserProfile",
 });
 
 const sessionStore = useSessionStore();
+const router = useRouter();
 
 const pic = ref(sessionStore.profileImageUrl);
 const name = ref(sessionStore.displayName);
 const email = ref(sessionStore.email);
 const logoutUrl = ref(sessionStore.logoutUrl);
+
+const gotoRouteList = () => {
+  router.push({ name: RouteNames.RouteList });
+};
 </script>
 
 <template>
@@ -26,7 +33,7 @@ const logoutUrl = ref(sessionStore.logoutUrl);
           </q-item-section>
         </q-item>
         <q-separator />
-        <q-item clickable v-close-popup>
+        <q-item clickable v-close-popup @click="gotoRouteList">
           <q-item-section>Tracked routes</q-item-section>
         </q-item>
         <q-separator />
