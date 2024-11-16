@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useSessionStore } from "./session-store";
 import { api } from "boot/axios";
+import { ApiRoutes } from "./constants";
 export const useRouteStore = defineStore("routes", {
   state: () => ({
     /** @type {import('./typedefs').RouteList} */
@@ -18,7 +19,7 @@ export const useRouteStore = defineStore("routes", {
       }
 
       const response = await api.get(
-        "api/routes?tzOffset=" + sessionStore.tzOffset
+        ApiRoutes.routeList(sessionStore.tzOffset)
       );
       this.routes = response.data.routes;
 

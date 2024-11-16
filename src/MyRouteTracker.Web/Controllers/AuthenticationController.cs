@@ -11,6 +11,7 @@ public class AuthenticationController : Controller
     [HttpGet("~/login", Name = "login")]
     public ActionResult LogIn(string returnUrl = "")
     {
+        returnUrl = Startup.AppPrefix + returnUrl;
         var properties = new AuthenticationProperties
         {
             // Only allow local return URLs to prevent open redirect attacks.

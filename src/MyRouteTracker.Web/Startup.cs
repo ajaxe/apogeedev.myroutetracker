@@ -20,6 +20,7 @@ namespace MyRouteTracker.Web;
 public class Startup
 {
     public const string EnvVarPrefix = "APP_";
+    public static string AppPrefix => Environment.GetEnvironmentVariable($"{EnvVarPrefix}AppPathPrefix") ?? "";
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment Env { get; }
     public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -163,13 +164,11 @@ public class Startup
         app.UseForwardedHeaders();
         app.UseSerilogRequestLogging();
 
-        string appPrefix = Environment.GetEnvironmentVariable($"{EnvVarPrefix}AppPathPrefix") ?? string.Empty;
-
-        if (!string.IsNullOrWhiteSpace(appPrefix))
+        if (!string.IsNullOrWhiteSpace(AppPrefix))
         {
             app.Use((context, next) =>
             {
-                context.Request.PathBase = appPrefix;
+                context.Request.PathBase = AppPrefix;
                 return next();
             });
         }
@@ -177,9 +176,6 @@ public class Startup
         app.UseExceptionHandler();
 
         app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
 
         if (Env.IsDevelopment())
         {
@@ -191,6 +187,15 @@ public class Startup
                     });
                 });
         }
+        else
+        {
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+        }
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { api } from "boot/axios";
+import { ApiRoutes } from "./constants";
 
 export const useSessionStore = defineStore("session", {
   state: () => ({
@@ -23,7 +24,7 @@ export const useSessionStore = defineStore("session", {
       if (forceCheck) {
         sessionApi = null;
       }
-      sessionApi = sessionApi || api.get("api/session");
+      sessionApi = sessionApi || api.get(ApiRoutes.session);
       try {
         const response = await sessionApi;
         this.isLoggedIn = response.data.isLoggedIn;
