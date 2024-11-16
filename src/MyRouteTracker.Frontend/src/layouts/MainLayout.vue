@@ -18,6 +18,8 @@
 
     <q-page-container>
       <router-view />
+      <RouteTrackerAction />
+      <RouteTracker />
     </q-page-container>
 
     <q-footer reveal elevated class="bg-grey-8 text-white">
@@ -34,8 +36,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import UserProfileContainer from "components/UserProfileContainer.vue";
+import RouteTrackerAction from "src/components/RouteTrackerAction.vue";
+import RouteTracker from "src/components/RouteTracker.vue";
+import UserProfileContainer from "src/components/UserProfileContainer.vue";
 
 defineOptions({
   name: "MainLayout",

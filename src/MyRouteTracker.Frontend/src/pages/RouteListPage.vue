@@ -11,11 +11,6 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <RouteListActions class="q-my-md" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
             <RouteList />
           </div>
         </div>
@@ -24,8 +19,6 @@
   </q-page>
 </template>
 <script setup lang="js">
-
-import RouteListActions from "src/components/RouteListActions.vue";
 import RouteList from "src/components/RouteList.vue";
 
 defineOptions({
