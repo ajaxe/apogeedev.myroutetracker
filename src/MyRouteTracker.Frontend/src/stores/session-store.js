@@ -7,7 +7,7 @@ export const useSessionStore = defineStore("session", {
     /**
      * @type {boolean}
      */
-    isLoggedIn: null,
+    __isLoggedIn: null,
     email: "",
     displayName: "",
     profilePic: "",
@@ -17,7 +17,20 @@ export const useSessionStore = defineStore("session", {
     tzOffset: new Date().getTimezoneOffset(),
   }),
   getters: {
-    doubleCount: (state) => state.counter * 2,
+    /**
+     * Returns the 'true' if user is logged-in otherwise 'false'.
+     *
+     * @param {*} state
+     * @returns {boolean}
+     */
+    isLoggedIn: (state) => !!state.__isLoggedIn,
+    /**
+     * Checks if session was checked with the backend.
+     *
+     * @param {*} state
+     * @returns {boolean}
+     */
+    isSessionChecked: (state) => state.__isLoggedIn !== null,
   },
   actions: {
     async checkSession(forceCheck) {
@@ -27,7 +40,7 @@ export const useSessionStore = defineStore("session", {
       sessionApi = sessionApi || api.get(ApiRoutes.session);
       try {
         const response = await sessionApi;
-        this.isLoggedIn = response.data.isLoggedIn;
+        this.__isLoggedIn = response.data.isLoggedIn;
         this.email = response.data.email;
         this.displayName = response.data.name;
         this.profileImageUrl = response.data.profileImageUrl;
@@ -35,7 +48,7 @@ export const useSessionStore = defineStore("session", {
         this.loginUrl = response.data.loginUrl;
         this.logoutUrl = response.data.logoutUrl;
       } catch (err) {
-        this.isLoggedIn = false;
+        this.__isLoggedIn = false;
       }
     },
   },

@@ -22,7 +22,7 @@ if (sessionStore.isLoggedIn) {
 } else {
   setTimeout(
     () => window.location.replace(`${sessionStore.loginUrl}?returnUrl=/`),
-    2000
+    100
   );
 }
 </script>

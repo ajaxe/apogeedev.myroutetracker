@@ -45,7 +45,7 @@ const routes = [
 
 const checkAuthenticatedSession = async () => {
   const sessionStore = useSessionStore();
-  if (sessionStore.isLoggedIn === null) {
+  if (sessionStore.isSessionChecked) {
     await sessionStore.checkSession();
   }
   return sessionStore.isLoggedIn;

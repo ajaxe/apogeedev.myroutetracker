@@ -1,5 +1,5 @@
 <template>
-  <q-page-sticky position="bottom" expand>
+  <q-page-sticky position="bottom" expand v-if="isLoggedIn && showTracker">
     <div class="col-12 col-md-8 col-lg-6 q-px-sm q-px-md-none">
       <q-card class="my-card" flat bordered>
         <q-card-section horizontal>
@@ -21,7 +21,7 @@
           <q-card-actions class="justify-around q-px-md" align="left">
             <q-btn flat round icon="play_arrow" />
             <q-btn flat round icon="pause" />
-            <q-btn flat round icon="close" />
+            <q-btn flat round icon="close" @click="close" />
           </q-card-actions>
         </q-card-section>
       </q-card>
@@ -29,9 +29,21 @@
   </q-page-sticky>
 </template>
 <script setup>
+import { computed } from "vue";
+import { useSessionStore } from "src/stores/session-store";
+import { useRouteTracker } from "src/stores/route-tracker-store";
+
 defineOptions({
   name: "RouteTracker",
 });
 const name = "Test";
 const modeIcon = "walk";
+
+const sessionStore = useSessionStore();
+const trackerStore = useRouteTracker();
+
+const isLoggedIn = computed(() => !!sessionStore.isLoggedIn);
+const showTracker = computed(() => trackerStore.showTracker);
+
+const close = () => trackerStore.hideTracker();
 </script>
