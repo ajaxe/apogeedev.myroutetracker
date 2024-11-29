@@ -28,4 +28,25 @@ public class RoutesController : ControllerBase
 
         return Ok(vm);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateNewRoute(string? trackerId)
+    {
+        RouteDataSet? tracker = null;
+
+        if (string.IsNullOrWhiteSpace(trackerId))
+            tracker = await dataService.CreateNewRoute();
+        else
+            tracker = await dataService.GetRoute(trackerId);
+
+        return Ok(tracker);
+    }
+    [HttpDelete("{trackerId}")]
+    public async Task<IActionResult> DeleteRoute(string trackerId)
+    {
+        if (!string.IsNullOrWhiteSpace(trackerId))
+            await dataService.DeleteRoute(trackerId);
+
+        return NoContent();
+    }
 }

@@ -51,6 +51,12 @@ export const useSessionStore = defineStore("session", {
         this.__isLoggedIn = false;
       }
     },
+
+    validateSession() {
+      if (!this.isLoggedIn) {
+        throw new Error("User not logged-in");
+      }
+    },
   },
 });
 

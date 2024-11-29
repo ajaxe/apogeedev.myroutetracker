@@ -21,26 +21,33 @@
       </q-card-section>
 
       <q-card-actions class="justify-around q-px-md" align="left">
-        <q-btn flat round color="red" icon="delete_outline" />
+        <q-btn
+          flat
+          round
+          color="red"
+          icon="delete_outline"
+          @click="deleteRoute"
+        />
       </q-card-actions>
     </q-card-section>
   </q-card>
 </template>
 <script setup>
 import { computed } from "vue";
+import { useRouteStore } from "src/stores/route-store";
+import { Helpers } from "src/stores/constants";
 
 //const { id, userIdentifier, name, mode } | ["id", "userIdentifier", "name", "mode"]
 const props = defineProps(["id", "userIdentifier", "name", "mode"]);
 const { id, userIdentifier, name, mode } = props;
 
+const routeStore = useRouteStore();
+
 const modeIcon = computed(() => mapIcons());
 
-const mapIcons = () => {
-  switch (mode) {
-    case "Walk":
-      return "directions_walk";
-    default:
-      return "info";
-  }
+const deleteRoute = () => {
+  routeStore.deleteRoute(id);
 };
+
+const mapIcons = () => Helpers.mapModeToIcon(mode);
 </script>

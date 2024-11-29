@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <RouteListItem
@@ -14,15 +13,15 @@
 <script setup>
 import { useRouteStore } from "src/stores/route-store";
 import RouteListItem from "./RouteListItem.vue";
-import { ref, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 defineOptions({
   name: "RouteList",
 });
 
 const routeStore = useRouteStore();
-const routes = ref([]);
+const routes = computed(() => routeStore.routes);
 
 onMounted(async () => {
-  routes.value = await routeStore.fetchRoutes();
+  await routeStore.fetchRoutes();
 });
 </script>

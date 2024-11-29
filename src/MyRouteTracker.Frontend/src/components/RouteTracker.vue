@@ -8,7 +8,7 @@
             </q-btn>
           </q-card-actions>
           <q-card-section class="q-mr-auto">
-            <div class="text-h6">{{ name }}</div>
+            <div class="text-h6">{{ currentName }}</div>
             <div class="text-subtitle text-muted">
               <q-icon class="mode" :name="modeIcon" />
             </div>
@@ -29,21 +29,22 @@
   </q-page-sticky>
 </template>
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useSessionStore } from "src/stores/session-store";
 import { useRouteTracker } from "src/stores/route-tracker-store";
 
 defineOptions({
   name: "RouteTracker",
 });
-const name = "Test";
-const modeIcon = "walk";
 
 const sessionStore = useSessionStore();
 const trackerStore = useRouteTracker();
 
 const isLoggedIn = computed(() => !!sessionStore.isLoggedIn);
 const showTracker = computed(() => trackerStore.showTracker);
+
+const currentName = computed(() => trackerStore.current.name);
+const modeIcon = ref(trackerStore.modeIcon);
 
 const close = () => trackerStore.hideTracker();
 </script>

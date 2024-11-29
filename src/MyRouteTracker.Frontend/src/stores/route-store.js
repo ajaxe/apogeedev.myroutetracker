@@ -14,18 +14,30 @@ export const useRouteStore = defineStore("routes", {
     async fetchRoutes() {
       const sessionStore = useSessionStore();
 
-      if (!sessionStore.isLoggedIn) {
-        throw new Error("User not logged-in");
-      }
+      sessionStore.validateSession();
 
       const response = await api.get(
         ApiRoutes.routeList(sessionStore.tzOffset)
       );
+
       this.routes = response.data.routes;
 
       console.log(`route count: ${this.routes.length}`);
 
       return this.routes;
+    },
+
+    async deleteRoute(trackerId) {
+      if (!trackerId) {
+        return;
+      }
+      const sessionStore = useSessionStore();
+      sessionStore.validateSession();
+
+      await api.delete(ApiRoutes.routeDelete(trackerId));
+
+      const index = this.routes.findIndex((r) => r.id === trackerId);
+      this.routes.splice(index, 1);
     },
   },
 });

@@ -93,8 +93,6 @@ public class Startup
     private void ConfigureOpenIdConnect(IServiceCollection services,
         AuthenticationBuilder authBuilder)
     {
-        IdentityModelEventSource.ShowPII = true;
-
         var authOptions = new OAuthOptions();
         Configuration.GetSection(OAuthOptions.SectionName)
             .Bind(authOptions);
