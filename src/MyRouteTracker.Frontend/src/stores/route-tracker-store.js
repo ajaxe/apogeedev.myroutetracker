@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useSessionStore } from "./session-store";
+import { useRouteStore } from "./route-store";
 import { api } from "boot/axios";
 import { ApiRoutes, Helpers } from "./constants";
 
@@ -12,8 +13,7 @@ export const useRouteTracker = defineStore("routeTracker", {
   getters: {
     showTracker: (state) => state.visible,
     showTrackerAction: (state) => !state.visible,
-    modeIcon: (state) =>
-      Helpers.mapModeToIcon(state.current?.mode.toLowerCase()),
+    modeIcon: (state) => Helpers.mapModeToIcon(state.current?.mode),
   },
   actions: {
     async startNew() {
@@ -29,6 +29,8 @@ export const useRouteTracker = defineStore("routeTracker", {
 
       if (this.current) {
         this.visible = true;
+        const routeStore = useRouteStore();
+        routeStore.routes.push(this.current);
       }
       return this.current;
     },

@@ -44,7 +44,7 @@ const isLoggedIn = computed(() => !!sessionStore.isLoggedIn);
 const showTracker = computed(() => trackerStore.showTracker);
 
 const currentName = computed(() => trackerStore.current.name);
-const modeIcon = ref(trackerStore.modeIcon);
+const modeIcon = computed(() => trackerStore.modeIcon);
 
 const close = () => trackerStore.hideTracker();
 </script>
