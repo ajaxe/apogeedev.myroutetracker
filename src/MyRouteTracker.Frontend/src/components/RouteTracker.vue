@@ -4,7 +4,13 @@
       <q-card class="my-card" flat bordered>
         <q-card-section horizontal>
           <q-card-actions class="justify-around q-px-md" align="right">
-            <q-btn flat round color="secondary" icon="screen_lock_portrait">
+            <q-btn
+              :outline="screenLockActive"
+              round
+              :color="screenLockColor"
+              icon="screen_lock_portrait"
+              @click="toggleScreenLock"
+            >
             </q-btn>
           </q-card-actions>
           <q-card-section class="q-mr-auto">
@@ -14,13 +20,21 @@
             </div>
           </q-card-section>
 
-          <q-card-section>
-            <q-skeleton width="50px" height="50px" />
-          </q-card-section>
-
           <q-card-actions class="justify-around q-px-md" align="left">
-            <q-btn flat round icon="play_arrow" />
-            <q-btn flat round icon="pause" />
+            <q-btn
+              flat
+              round
+              icon="play_arrow"
+              v-if="paused"
+              @click="continueTracking"
+            />
+            <q-btn
+              flat
+              round
+              icon="pause"
+              v-if="!paused"
+              @click="pauseTracking"
+            />
             <q-btn flat round icon="close" @click="close" />
           </q-card-actions>
         </q-card-section>
@@ -42,9 +56,21 @@ const trackerStore = useRouteTracker();
 
 const isLoggedIn = computed(() => !!sessionStore.isLoggedIn);
 const showTracker = computed(() => trackerStore.showTracker);
+const paused = computed(() => trackerStore.paused);
+const screenLockActive = ref(true);
 
 const currentName = computed(() => trackerStore.current.name);
 const modeIcon = computed(() => trackerStore.modeIcon);
+const screenLockColor = computed(() =>
+  screenLockActive.value ? "secondary" : ""
+);
 
 const close = () => trackerStore.hideTracker();
+
+const continueTracking = () => (trackerStore.paused = false);
+const pauseTracking = () => (trackerStore.paused = true);
+const toggleScreenLock = async () => {
+  screenLockActive.value = !screenLockActive.value;
+  await trackerStore.toggleWakeLock(screenLockActive.value);
+};
 </script>
