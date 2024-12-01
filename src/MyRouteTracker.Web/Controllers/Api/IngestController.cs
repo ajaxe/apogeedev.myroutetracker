@@ -18,7 +18,7 @@ public class IngestController : ControllerBase
 
     [HttpPost("{routeId}/datapoint")]
     public async Task<IActionResult> PostDataPoint(string routeId,
-        [FromBody] RouteDataPointInput[] data,
+        [FromBody] RouteDataMark data,
         [FromServices] IDataIngestionService ingestionService)
     {
         await ingestionService.Ingest(routeId, data);

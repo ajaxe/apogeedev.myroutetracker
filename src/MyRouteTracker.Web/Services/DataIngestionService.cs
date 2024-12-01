@@ -19,17 +19,18 @@ public class DataIngestionService : IDataIngestionService
         this.userContextProvider = userContextProvider;
         this.logger = logger;
     }
-    public async Task Ingest(string routeId, RouteDataPointInput[] dataPoint)
+    public async Task Ingest(string routeId, RouteDataMark dataMark)
     {
 
         var profile = await userContextProvider.GetUserProfile()
             ?? throw new InvalidOperationException("Invalid user context");
 
         logger.LogInformation("{@UserId} {@RouteId} posted {@DataPoint}",
-            profile.UserIdentifier, routeId, dataPoint);
+            profile.UserIdentifier, routeId, dataMark.DataPoints);
         // check userId exists
         // check routeId exists
 
+        var dataPoint = dataMark.DataPoints;
         var dps = dataPoint.Where(d => d.Coords != null
                 && d.Coords.Longitude.HasValue
                 && d.Coords.Latitude.HasValue)
@@ -54,7 +55,14 @@ public class DataIngestionService : IDataIngestionService
             return;
         }
 
+        dbContext.Add(new RouteBatteryData
+        {
+            RouteDataSetId = ObjectId.Parse(routeId),
+            BatteryLevel = dataMark.BatteryLevel,
+        });
+
         await dbContext.AddRangeAsync(dps);
+
         await dbContext.SaveChangesAsync();
     }
 }

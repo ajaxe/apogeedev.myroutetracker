@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
 
     public DbSet<RouteDataPoint> RouteDataPoints { get; set; }
     public DbSet<RouteDataSet> RouteDataSets { get; set; }
+    public DbSet<RouteBatteryData> RouteBatteryData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
